@@ -1,0 +1,24 @@
+{
+  "name": "zxcs-vue",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview --port 5050",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "@vueuse/core": "^8.2.5",
+    "vue": "^3.2.31",
+    "vue-router": "^4.0.14",
+    "vue3-lazyload": "^0.2.5-beta"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.26",
+    "@vitejs/plugin-vue": "^2.3.1",
+    "@vue/tsconfig": "^0.1.3",
+    "typescript": "~4.6.3",
+    "vite": "^2.9.1",
+    "vue-tsc": "^0.33.9"
+  }
+}

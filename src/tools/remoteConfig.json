@@ -1,0 +1,11 @@
+{
+    "baseUri": "https://zxcs.imhcg.cn/api",
+    "loginUri": "https://account.imhcg.cn/to/c5129aaf0c34ae93d82a60f8888d9945",
+    "api": {
+        "books":"/books",
+        "cover":"/static/cover@webp/",
+        "chapter":"/chapter",
+        "chapters":"/chapters",
+        "history":"/history"
+    }
+}
