@@ -5,9 +5,6 @@ const props = defineProps<{
     chapter: Array<string>
 }>()
 
-const emit = defineEmits<{
-    (e: 'chapterControl', mouse: number): void
-}>()
 
 
 const renderHtmlText = (chapterArray: Array<string>) => {

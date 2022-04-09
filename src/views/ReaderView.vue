@@ -1,112 +1,142 @@
 <script setup lang="ts">
-import { ref, reactive, watch } from "vue";
-import { getBookChapters, getBookChapter } from "../tools/request";
-import { onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import type { Chapters } from "../tools/store";
-import ComponentChapters from "../components/Chapters.vue";
-import ComponentChapterText from "../components/ChapterText.vue";
-import { FullscreenLoading } from "../tools/store";
+import { ref, watch } from "vue"
+import {
+  getBookChapters,
+  getBookChapter,
+  parseJson,
+  saveOneHistory,
+  removeOneHistory,
+} from "../tools/request"
+import { onBeforeMount } from "vue"
+import { useRoute } from "vue-router"
+import type { Chapters } from "../tools/store"
+import { FullscreenLoading, Title, History } from "../tools/store"
 
+import ComponentChapters from "../components/Chapters.vue"
+import ComponentChapterText from "../components/ChapterText.vue"
 
 const route = useRoute()
-const bookId = ref(route.query.id)
-const bookName = ref(route.query.name)
+const bookId = ref<string>(route.query.id as string)
+const bookName = ref<string>(route.query.name as string)
 const currentBookChapters = ref<Chapters>([])
 const currentBookChapterArray = ref<Array<string>>([])
 const showBookChapters = ref(false)
-const currentBookChapterIndex = ref(0)
+Title.value = bookName.value + ' - 简单全本'
 
+// first try to find index at localstorage, as collected book
+// if not, set index to 0, as new book
+const currentBookChapterIndex = History.value.hasOwnProperty(bookId.value)
+  ? ref(Number(History.value[bookId.value][0]))
+  : ref(0);
 
-const parseJson = (resp: Response, callback: Function) => {
-    if (resp.status === 200) {
-        resp.json().then(
-            (data) => {
-                callback(data)
-            }
-        )
-    } else {
-        alert("错误代码 " + resp.status)
-    }
-}
+const isBookLiked = ref(History.value.hasOwnProperty(bookId.value))
+
 
 const requestBookChapters = () => {
-    FullscreenLoading.value = true
-    getBookChapters(Number(bookId.value)).then((resp) => {
-        parseJson(resp, (jsonData: any) => {
-            console.log(jsonData)
-            currentBookChapters.value = jsonData.chapters
-            FullscreenLoading.value = false
+  FullscreenLoading.value = true;
+  getBookChapters(String(bookId.value)).then((resp) => {
+    parseJson(resp, (jsonData: any) => {
+      console.log('getBookChapters success ',jsonData);
+      currentBookChapters.value = jsonData.chapters;
+      FullscreenLoading.value = false;
+    });
+  });
+};
 
-        })
-    })
+// it is better to load chapter content by index change instead of direct pass a index
+const requestBookChapter = () => {
+  FullscreenLoading.value = true;
+  getBookChapter(String(bookId.value), currentBookChapterIndex.value).then((resp) => {
+    parseJson(resp, (jsonData: any) => {
+      console.log('getBookChapter success ',jsonData);
+      currentBookChapterArray.value = jsonData.chapter;
+      FullscreenLoading.value = false;
+      document.documentElement.scrollTop = 0;
+      // after success get a chapter,
+      // update chapter status to history api when the book is collected
+      if (History.value.hasOwnProperty(String(bookId.value))) {
+        saveOneHistory(
+          String(bookId.value),
+          Number(currentBookChapterIndex.value),
+          String(bookName.value)
+        );
+      }
+    });
+  });
+};
+
+const likeABook = () => {
+  History.value[String(bookId.value)] = [
+    String(currentBookChapterIndex.value),
+    String(bookName.value),
+  ];
+  saveOneHistory(
+    String(bookId.value),
+    Number(currentBookChapterIndex.value),
+    String(bookName.value)
+  );
+  isBookLiked.value = true;
+};
+
+
+const disLikeABook = () => {
+  delete History.value[String(bookId.value)];
+  removeOneHistory(String(bookId.value));
+  isBookLiked.value = false;
+};
+
+
+function addChapterIndex(num: number) {
+  const next = currentBookChapterIndex.value + num;
+  if (next >= currentBookChapters.value.length) {
+    return;
+  }
+  if (next < 0) {
+    return;
+  }
+  currentBookChapterIndex.value = next;
 }
 
-
-const requestBookChapter = (index: number) => {
-    console.log("加载章节" + index)
-    FullscreenLoading.value = true
-
-    getBookChapter(Number(bookId.value), index).then((resp) => {
-        parseJson(resp, (jsonData: any) => {
-            console.log(jsonData)
-            currentBookChapterArray.value = jsonData.chapter
-            showBookChapters.value = false
-            currentBookChapterIndex.value = index
-            FullscreenLoading.value = false
-            document.documentElement.scrollTop = 0;
-        })
-    })
+function setChapterIndex(index:number) {
+    currentBookChapterIndex.value = index
+    showBookChapters.value = false;
 }
 
-function changeIndex(num: number) {
-    const next = currentBookChapterIndex.value + num
-    if (next >= currentBookChapters.value.length) {
-        return
-    }
-    if (next < 0) {
-        return
-    }
-    currentBookChapterIndex.value = next
+// watch chapter index, load new chapter content when index changed 
+watch(currentBookChapterIndex, () => {
+  requestBookChapter();
+})
 
-}
-
-
-watch(currentBookChapterIndex, (index) => { requestBookChapter(index) })
-
-onMounted(() => {
-    requestBookChapters()
-    requestBookChapter(currentBookChapterIndex.value)
+// request data before page mounted
+onBeforeMount(() => {
+  requestBookChapters();
+  requestBookChapter();
 })
 
 </script>
 
 <template>
-    <div class="buttons">
-        <button @click="showBookChapters = true">显示目录</button>
-        <button @click="changeIndex(-1)">上一章</button>
-    </div>
-    <ComponentChapterText ref="text" :chapter="currentBookChapterArray" />
-    <ComponentChapters
-        v-if="showBookChapters"
-        :chapters="currentBookChapters"
-        :index="currentBookChapterIndex"
-        @loadChapter="requestBookChapter"
-    />
-    <div class="buttons">
-        <button @click="changeIndex(1)">下一章</button>
-    </div>
+  <div class="buttons">
+    <button v-if="!isBookLiked" @click="likeABook()">收藏</button>
+    <button v-if="isBookLiked" @click="disLikeABook()">移出收藏</button>
+    <button @click="showBookChapters = true">显示目录</button>
+    <button v-if="currentBookChapterIndex > 0" @click="addChapterIndex(-1)">
+      上一章
+    </button>
+  </div>
+  <ComponentChapterText
+    v-if="!showBookChapters"
+    ref="text"
+    :chapter="currentBookChapterArray"
+  />
+  <ComponentChapters
+    v-if="showBookChapters"
+    :chapters="currentBookChapters"
+    :index="currentBookChapterIndex"
+    @setChapterIndex="setChapterIndex"
+  />
+  <div class="buttons">
+    <button @click="addChapterIndex(1)">下一章</button>
+  </div>
 </template>
 
-
-<style scoped>
-button {
-    margin-left: 0.25rem;
-    padding: 0.5rem;
-}
-.buttons {
-    display: flex;
-    justify-content: right;
-    padding: 1rem;
-}
-</style>

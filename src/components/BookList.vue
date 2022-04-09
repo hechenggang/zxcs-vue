@@ -2,12 +2,16 @@
 import { defineProps } from "vue";
 import { localConfig } from "../tools/store";
 import type { Books } from "../tools/store";
-import { RouterLink, RouterView,useRouter } from "vue-router";
+
 
 const props = defineProps<{
     books: Books
 }>()
+
+
 </script>
+
+
 <template>
     <ul class="books">
         <li class="book" v-for="b in books" :key="b.book_id">
@@ -19,16 +23,16 @@ const props = defineProps<{
             <div class="bookinfo">
                 <RouterLink
                     :to="{ name: 'reader', query: { id: b.book_id, name: b.book_name } }"
-                    class="book_name"
+                    class="book-name"
                 >{{ b.book_name }}</RouterLink>
-                <p class="book_brief">作者：{{ b.book_author.replace(/^\s+|\s+$/g, "") }}</p>
-                <p class="book_brief">{{ b.book_brief }}</p>
+                <p v-if="b.book_author" class="book-brief">作者：{{ b.book_author.replace(/^\s+|\s+$/g, "") }}</p>
+                <p  v-if="b.book_brief" class="book-brief">{{ b.book_brief }}</p>
             </div>
         </li>
     </ul>
 </template>
 
-<style  scoped>
+<style >
 .books {
     margin: 0;
     padding: 1rem;
@@ -55,14 +59,14 @@ const props = defineProps<{
     flex-direction: column;
 }
 
-.book_name {
+.book-name {
     font-size: 1.25rem;
     line-height: 1.75rem;
     color: #5698c3;
     font-weight: bold;
 }
 
-.book_brief {
+.book-brief {
     font-size: .8rem;
     line-height: 1rem;
 }

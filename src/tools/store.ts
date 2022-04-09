@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { useLocalStorage, useMouse } from '@vueuse/core'
+import { useLocalStorage, useMouse, useTitle } from '@vueuse/core'
 
 type remoteConfig = {
     "baseUri": string,
@@ -27,7 +27,9 @@ type Chapters = Array<Chapter>
 
 const localConfig = useLocalStorage("remoteConfig", {} as remoteConfig)
 const localApiCode = useLocalStorage("x-api-code", "")
+const History = useLocalStorage<Record<string,[string,string]>>("history", {})
 const FullscreenLoading = ref(false)
+const Title = useTitle("简单全本")
 
-export { localConfig, localApiCode, FullscreenLoading }
+export { localConfig, localApiCode, FullscreenLoading, Title, History }
 export type { remoteConfig, Book, Books, Chapter, Chapters }

@@ -6,41 +6,48 @@ import type { remoteConfig } from "./tools/store";
 import { FullscreenLoading } from "./tools/store";
 import Loading from "./components/Loading.vue";
 
-const router = useRouter()
+const router = useRouter();
 
 async function loadRemoteConfig() {
-  // 加载远程配置
-  console.log("加载远程配置")
+  // load remote config
   try {
-    const resp = await Get("https://worker.imhcg.cn/zxcsRemoteConfig")
+    const resp = await Get('https://worker.imhcg.cn/zxcsRemoteConfig');
     if (resp.status !== 200) {
-      alert("加载远程配置失败，错误代码为" + resp.status)
+      alert('加载远程配置失败，错误代码为' + resp.status);
     } else {
+      console.log('loadRemoteConfig success',resp);
       const data: remoteConfig = await resp.json()
-      console.log(data)
-      // // 存一份到本地，通过 useLocalStorage 提供给其他组件
-      localStorage.setItem("remoteConfig", JSON.stringify(data))
+      localStorage.setItem('remoteConfig', JSON.stringify(data));
     }
   } catch (error) {
-    alert("加载远程配置失败，请联系管理员")
-    console.log(error)
+    alert('加载远程配置失败，请联系管理员')
+    console.log(error);
   }
-
-  // 重定向到 登录页面
-  router.push("/login")
 }
 
 onBeforeMount(() => loadRemoteConfig())
-
 </script>
 
 
 <template>
-  <RouterView />
+  <router-view v-slot="{ Component, route }">
+    <transition name="fade" mode="out-in">
+      <div :key="String(route.name)">
+        <component :is="Component"></component>
+      </div>
+    </transition>
+  </router-view>
+
   <Loading v-if="FullscreenLoading" />
 </template>
 
 <style>
+:root {
+  --color-bg: #fffef8;
+  --color-link: #bbb5ac;
+  --color-text: #393733;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -49,5 +56,19 @@ onBeforeMount(() => loadRemoteConfig())
   border: none;
   outline: none;
   box-sizing: border-box;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+.buttons {
+  display: flex;
+  justify-content: right;
+  padding: 1rem;
+}
+button {
+  cursor: pointer;
+  margin-left: 0.25rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color-link);
 }
 </style>

@@ -1,22 +1,66 @@
-import { ref } from 'vue'
-import { useLocalStorage, useMouse } from '@vueuse/core'
 
 
-import { onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { localConfig, localApiCode } from "./store";
+import { localConfig, FullscreenLoading } from "./store";
+
 import { Get } from "./";
 
+
+const parseJson = (resp: Response, callback: Function) => {
+    if (resp.status === 200) {
+        resp.json().then((data) => {
+            callback(data);
+        });
+    } else {
+        FullscreenLoading.value = false;
+        alert("错误代码 " + resp.status);
+    }
+};
+
+
 function getBooks(offset: number = 0, limit: number = 10, keyword: string = "") {
-    return Get(localConfig.value.baseUri + localConfig.value.api.books, { limit, offset, keyword })
+    let query = {}
+    if (keyword != "") {
+        query = { action: 'find', keyword, limit, offset }
+    } else {
+        query = { limit, offset, keyword }
+    }
+    return Get(localConfig.value.baseUri + localConfig.value.api.books, query)
 }
 
-function getBookChapters(id:number):Promise<Response> {
+function getBookChapters(id: string): Promise<Response> {
     return Get(localConfig.value.baseUri + localConfig.value.api.chapters, { id })
 }
 
 
-function getBookChapter(id:number,index:number):Promise<Response> {
-    return Get(localConfig.value.baseUri + localConfig.value.api.chapter, { id,index })
+function getBookChapter(id: string, index: number): Promise<Response> {
+    return Get(localConfig.value.baseUri + localConfig.value.api.chapter, { id, index })
 }
-export { getBooks, getBookChapters,getBookChapter }
+
+
+function getAllHistory(): Promise<Response> {
+    return Get(localConfig.value.baseUri + localConfig.value.api.history, { action: 'get.all' })
+}
+
+
+function getOneHistory(id: string): Promise<Response> {
+    return Get(localConfig.value.baseUri + localConfig.value.api.history, { action: 'get.one', book_id: id })
+}
+
+
+function saveOneHistory(id: string, index: number, name: string): Promise<Response> {
+    return Get(localConfig.value.baseUri + localConfig.value.api.history, {
+        action: 'insert',
+        book_id: id,
+        book_name: name,
+        book_index: index
+    })
+}
+
+function removeOneHistory(id: string): Promise<Response> {
+    return Get(localConfig.value.baseUri + localConfig.value.api.history, {
+        action: 'remove',
+        book_id: id,
+    })
+}
+
+export { getBooks, getBookChapters, getBookChapter, parseJson, getAllHistory, getOneHistory, saveOneHistory, removeOneHistory }

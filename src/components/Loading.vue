@@ -1,6 +1,6 @@
 <template>
     <transition name="loader">
-        <div class="loading fixed_full flex_center">
+        <div class="loading fixed-full flex-center">
             <div class="loading-icon">
                 <svg
                     class="icon"
@@ -64,7 +64,7 @@
 </template>
 
 <style>
-.fixed_full {
+.fixed-full {
     position: fixed;
     top: 0;
     left: 0;
@@ -72,7 +72,7 @@
     height: 100%;
 }
 
-.flex_center {
+.flex-center {
     display: flex;
     align-items: center;
     justify-content: center;
