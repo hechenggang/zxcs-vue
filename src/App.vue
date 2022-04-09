@@ -11,33 +11,26 @@ const router = useRouter();
 async function loadRemoteConfig() {
   // load remote config
   try {
-    const resp = await Get('https://worker.imhcg.cn/zxcsRemoteConfig');
+    const resp = await Get("https://worker.imhcg.cn/zxcsRemoteConfig");
     if (resp.status !== 200) {
-      alert('加载远程配置失败，错误代码为' + resp.status);
+      alert("加载远程配置失败，错误代码为" + resp.status);
     } else {
-      console.log('loadRemoteConfig success',resp);
-      const data: remoteConfig = await resp.json()
-      localStorage.setItem('remoteConfig', JSON.stringify(data));
+      console.log("loadRemoteConfig success", resp);
+      const data: remoteConfig = await resp.json();
+      localStorage.setItem("remoteConfig", JSON.stringify(data));
     }
   } catch (error) {
-    alert('加载远程配置失败，请联系管理员')
+    alert("加载远程配置失败，请联系管理员");
     console.log(error);
   }
 }
 
-onBeforeMount(() => loadRemoteConfig())
+onBeforeMount(() => loadRemoteConfig());
 </script>
 
 
 <template>
-  <router-view v-slot="{ Component, route }">
-    <transition name="fade" mode="out-in">
-      <div :key="String(route.name)">
-        <component :is="Component"></component>
-      </div>
-    </transition>
-  </router-view>
-
+  <RouterView />
   <Loading v-if="FullscreenLoading" />
 </template>
 
@@ -71,4 +64,6 @@ button {
   padding: 0.5rem 1rem;
   border: 1px solid var(--color-link);
 }
+
+
 </style>

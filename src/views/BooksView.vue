@@ -8,7 +8,7 @@ import { FullscreenLoading, History, Title } from "../tools/store";
 
 import BookList from "../components/BookList.vue";
 
-Title.value = '书架 - 简单全本'
+Title.value = "书架 - 简单全本";
 const books = ref<Books>([]);
 const tempBooks = ref<Books>([]);
 const currentBooksOffset = ref(0);
@@ -39,18 +39,18 @@ function changeOffset(num: number) {
 }
 
 // for reuse booklist component, here try rebuild history data to match what booklist need
-const retypedHistory = computed(()=> {
+const retypedHistory = computed(() => {
   let tempHistorys = Array();
   Object.keys(History.value).forEach((id) => {
     tempHistorys.push({
       book_author: null,
-      book_brief: '当前进度 ' + History.value[id][0],
+      book_brief: "当前进度 " + History.value[id][0],
       book_id: id,
       book_name: History.value[id][1],
     });
   });
   return tempHistorys;
-})
+});
 
 const requestBooks = () => {
   FullscreenLoading.value = true;
@@ -60,7 +60,7 @@ const requestBooks = () => {
     currentBooksKeyword.value
   ).then((resp) => {
     parseJson(resp, (jsonData: any) => {
-      console.log('getBooks success',jsonData);
+      console.log("getBooks success", jsonData);
       books.value = jsonData.result;
       FullscreenLoading.value = false;
       document.documentElement.scrollTop = 0;
@@ -72,7 +72,7 @@ const requestAllHistory = () => {
   FullscreenLoading.value = true;
   getAllHistory().then((resp) => {
     parseJson(resp, (jsonData: any) => {
-      console.log('getAllHistory success ',jsonData);
+      console.log("getAllHistory success ", jsonData);
       History.value = jsonData.history;
       FullscreenLoading.value = false;
     });
@@ -81,28 +81,36 @@ const requestAllHistory = () => {
 
 watch(currentBooksOffset, () => {
   requestBooks();
-})
+});
 
 onMounted(() => {
   requestBooks();
   requestAllHistory();
-})
-
+});
 </script>
 
 <template>
   <div class="buttons">
-    <button v-if="!showBooksSearchBox && !showHistory" @click="swichShowSearchBox()">
+    <button
+      v-if="!showBooksSearchBox && !showHistory"
+      @click="swichShowSearchBox()"
+    >
       搜索
     </button>
-    <button v-if="showBooksSearchBox && !showHistory" @click="swichShowSearchBox()">
+    <button
+      v-if="showBooksSearchBox && !showHistory"
+      @click="swichShowSearchBox()"
+    >
       关闭搜索
     </button>
-  
+
     <button v-if="!showHistory" @click="swichShowHistory()">收藏夹</button>
     <button v-if="showHistory" @click="swichShowHistory()">关闭收藏夹</button>
 
-    <button v-if="currentBooksOffset > 0 && !showHistory" @click="changeOffset(-1)">
+    <button
+      v-if="currentBooksOffset > 0 && !showHistory"
+      @click="changeOffset(-1)"
+    >
       上一页
     </button>
   </div>
@@ -118,8 +126,9 @@ onMounted(() => {
   </div>
 
   <BookList :books="books" />
+
   <div class="buttons">
-    <button  v-if="!showHistory"  @click="changeOffset(1)">下一页</button>
+    <button v-if="!showHistory" @click="changeOffset(1)">下一页</button>
   </div>
 </template>
 
