@@ -34,7 +34,7 @@ recomputIsBookCollected();
 
 // first try to find index at localstorage, as collected book
 // if not, set index to 0, as new book
-const currentBookChapterIndex = isBookCollected
+const currentBookChapterIndex = isBookCollected.value
   ? ref(History.value[bookId.value][0])
   : ref(0);
 
