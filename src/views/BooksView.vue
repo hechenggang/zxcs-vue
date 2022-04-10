@@ -156,9 +156,9 @@ onMounted(() => {
 .search-input {
   flex-grow: 1;
   cursor: pointer;
-  width: 10%;
+  width: 50%;
   padding: 0.5rem 1rem;
-  border: 1px solid var(--color-link);
+  border: 0.5px solid var(--color-link);
 }
 .no-padding {
   padding: 0;
