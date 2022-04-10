@@ -17,18 +17,25 @@ const showBooksSearchBox = ref(false);
 const showHistory = ref(false);
 
 function swichShowHistory() {
+  FullscreenLoading.value = true;
   showBooksSearchBox.value = false;
   showHistory.value = !showHistory.value;
   if (showHistory.value) {
     tempBooks.value = books.value;
     books.value = [];
+
     // give it a time to wait tansition work
-    setTimeout(()=>books.value = retypedHistory.value,10)
-    
+    setTimeout(() => {
+      books.value = retypedHistory.value;
+      FullscreenLoading.value = false;
+    }, 200);
   } else {
     books.value = [];
     // books.value = tempBooks.value;
-    setTimeout(()=>books.value = tempBooks.value,10)
+    setTimeout(() => {
+      books.value = tempBooks.value;
+      FullscreenLoading.value = false;
+    }, 200);
   }
 }
 
@@ -66,7 +73,9 @@ const requestBooks = () => {
     currentBooksKeyword.value
   ).then((resp) => {
     parseJson(resp, (jsonData: any) => {
-      if (!jsonData){return}
+      if (!jsonData) {
+        return;
+      }
       console.log("getBooks success", jsonData);
       books.value = jsonData.result;
       FullscreenLoading.value = false;
@@ -79,7 +88,9 @@ const requestAllHistory = () => {
   FullscreenLoading.value = true;
   getAllHistory().then((resp) => {
     parseJson(resp, (jsonData: any) => {
-      if (!jsonData){return}
+      if (!jsonData) {
+        return;
+      }
       console.log("getAllHistory success ", jsonData);
       History.value = jsonData.history;
       FullscreenLoading.value = false;

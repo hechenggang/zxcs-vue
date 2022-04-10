@@ -52,7 +52,7 @@ onBeforeMount(() => loadRemoteConfig());
   --color-bg: #fffdf2;
   --color-link: #5698c3;
   --color-text: #393733;
-  --color-sub-text: #4d4a46;
+  --color-sub-text: #706b66;
 }
 html {
   font-size: 18px;
