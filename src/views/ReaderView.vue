@@ -42,6 +42,7 @@ const requestBookChapters = () => {
   FullscreenLoading.value = true;
   getBookChapters(bookId.value).then((resp) => {
     parseJson(resp, (jsonData: any) => {
+      if (!jsonData){return}
       console.log("getBookChapters", jsonData);
       currentBookChapters.value = jsonData.chapters;
       FullscreenLoading.value = false;
@@ -54,6 +55,7 @@ const requestBookChapter = () => {
   FullscreenLoading.value = true;
   getBookChapter(bookId.value, currentBookChapterIndex.value).then((resp) => {
     parseJson(resp, (jsonData: any) => {
+      if (!jsonData){return}
       console.log("getBookChapter", jsonData);
       currentBookChapterArray.value = jsonData.chapter;
       FullscreenLoading.value = false;
@@ -76,6 +78,7 @@ const requestBookHistory = () => {
   FullscreenLoading.value = true;
   getOneHistory(bookId.value).then((resp) => {
     parseJson(resp, (jsonData: any) => {
+      if (!jsonData){return}
       console.log("getOneHistory", jsonData);
       //   [200,["4","bookName"]]
       let tempIndex = jsonData[1][0];

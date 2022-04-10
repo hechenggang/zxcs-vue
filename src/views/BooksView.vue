@@ -21,9 +21,14 @@ function swichShowHistory() {
   showHistory.value = !showHistory.value;
   if (showHistory.value) {
     tempBooks.value = books.value;
-    books.value = retypedHistory.value;
+    books.value = [];
+    // give it a time to wait tansition work
+    setTimeout(()=>books.value = retypedHistory.value,10)
+    
   } else {
-    books.value = tempBooks.value;
+    books.value = [];
+    // books.value = tempBooks.value;
+    setTimeout(()=>books.value = tempBooks.value,10)
   }
 }
 
@@ -61,6 +66,7 @@ const requestBooks = () => {
     currentBooksKeyword.value
   ).then((resp) => {
     parseJson(resp, (jsonData: any) => {
+      if (!jsonData){return}
       console.log("getBooks success", jsonData);
       books.value = jsonData.result;
       FullscreenLoading.value = false;
@@ -73,6 +79,7 @@ const requestAllHistory = () => {
   FullscreenLoading.value = true;
   getAllHistory().then((resp) => {
     parseJson(resp, (jsonData: any) => {
+      if (!jsonData){return}
       console.log("getAllHistory success ", jsonData);
       History.value = jsonData.history;
       FullscreenLoading.value = false;
@@ -138,7 +145,9 @@ onMounted(() => {
       <span class="button" @click="requestBooks()">搜索</span>
     </div>
   </Transition>
-  <BookList :books="books" />
+  <Transition>
+    <BookList v-if="books.length > 0" :books="books" />
+  </Transition>
 
   <div class="buttons end">
     <span class="false-button"></span>

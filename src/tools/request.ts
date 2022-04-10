@@ -9,8 +9,10 @@ const parseJson = (resp: Response, callback: Function) => {
     if (resp.status === 200) {
         resp.json().then((data) => {
             callback(data);
+            FullscreenLoading.value = false;
         });
     } else {
+        callback(null);
         FullscreenLoading.value = false;
         alert("错误代码 " + resp.status);
     }
