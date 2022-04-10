@@ -32,13 +32,13 @@ const chapterHtml = computed(() => renderHtmlText(props.chapter))
     padding: 1rem;
     overflow: auto;
     min-height: 100vh;
-    background-color: #fffef8;
+    background-color: var(--color-bg);
 }
 
 .chapter-text p {
     text-indent: 2rem;
-    line-height: 2.5rem;
-    word-wrap: break-word;
+    line-height: 2rem;
     font-size: 1.25rem;
+    word-wrap: break-word;
 }
 </style>

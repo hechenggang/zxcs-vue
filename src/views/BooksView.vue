@@ -17,6 +17,7 @@ const showBooksSearchBox = ref(false);
 const showHistory = ref(false);
 
 function swichShowHistory() {
+  showBooksSearchBox.value = false;
   showHistory.value = !showHistory.value;
   if (showHistory.value) {
     tempBooks.value = books.value;
@@ -109,14 +110,16 @@ onMounted(() => {
     <span class="button" v-if="!showHistory" @click="swichShowHistory()"
       >收藏夹</span
     >
-    <span class="button" v-if="showHistory" @click="swichShowHistory()"
-      >关闭收藏夹</span
-    >
+
+    <div class="buttons no-padding" v-if="showHistory">
+      <span class="false-button"></span>
+      <span class="button" @click="swichShowHistory()">关闭收藏夹</span>
+    </div>
 
     <span
       class="button"
       v-if="currentBooksOffset > 0 && !showHistory"
-      @click="changeOffset(-1)"
+      @click="changeOffset(-10)"
     >
       上一页
     </span>
@@ -137,18 +140,27 @@ onMounted(() => {
   </Transition>
   <BookList :books="books" />
 
-  <div class="buttons">
-    <span class="button" v-if="!showHistory" @click="changeOffset(1)"
+  <div class="buttons end">
+    <span class="false-button"></span>
+    <span class="button" v-if="!showHistory" @click="changeOffset(10)"
       >下一页</span
     >
   </div>
 </template>
 
 <style>
+.search {
+  display: flex;
+  width: 100%;
+}
 .search-input {
+  flex-grow: 1;
   cursor: pointer;
+  width: 10%;
   padding: 0.5rem 1rem;
   border: 1px solid var(--color-link);
-  width: auto;
+}
+.no-padding {
+  padding: 0;
 }
 </style>

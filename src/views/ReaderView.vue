@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import {
   getBookChapters,
   getBookChapter,
@@ -24,10 +24,17 @@ const currentBookChapterArray = ref<Array<string>>([]);
 const showBookChapters = ref(false);
 Title.value = bookName.value + " - 简单全本";
 
-const isBookCollected = () => History.value.hasOwnProperty(bookId.value);
+const isBookCollected = ref(false);
+
+const recomputIsBookCollected = () => {
+  isBookCollected.value = History.value.hasOwnProperty(bookId.value);
+};
+
+recomputIsBookCollected();
+
 // first try to find index at localstorage, as collected book
 // if not, set index to 0, as new book
-const currentBookChapterIndex = isBookCollected()
+const currentBookChapterIndex = isBookCollected
   ? ref(History.value[bookId.value][0])
   : ref(0);
 
@@ -45,25 +52,23 @@ const requestBookChapters = () => {
 // it is better to load chapter content by index change instead of direct pass a index
 const requestBookChapter = () => {
   FullscreenLoading.value = true;
-  getBookChapter(bookId.value, currentBookChapterIndex.value).then(
-    (resp) => {
-      parseJson(resp, (jsonData: any) => {
-        console.log("getBookChapter", jsonData);
-        currentBookChapterArray.value = jsonData.chapter;
-        FullscreenLoading.value = false;
-        document.documentElement.scrollTop = 0;
-        // afterget a chapter,
-        // update chapter status to history api when the book is collected
-        if (History.value.hasOwnProperty(bookId.value)) {
-          saveOneHistory(
-            bookId.value,
-            currentBookChapterIndex.value,
-            bookName.value
-          );
-        }
-      });
-    }
-  );
+  getBookChapter(bookId.value, currentBookChapterIndex.value).then((resp) => {
+    parseJson(resp, (jsonData: any) => {
+      console.log("getBookChapter", jsonData);
+      currentBookChapterArray.value = jsonData.chapter;
+      FullscreenLoading.value = false;
+      document.documentElement.scrollTop = 0;
+      // afterget a chapter,
+      // update chapter status to history api when the book is collected
+      if (History.value.hasOwnProperty(bookId.value)) {
+        saveOneHistory(
+          bookId.value,
+          currentBookChapterIndex.value,
+          bookName.value
+        );
+      }
+    });
+  });
 };
 
 // read remote index
@@ -87,19 +92,14 @@ const requestBookHistory = () => {
 };
 
 const likeABook = () => {
-  History.value[bookId.value] = [
-    currentBookChapterIndex.value,
-    bookName.value,
-  ];
-  saveOneHistory(
-    bookId.value,
-    currentBookChapterIndex.value,
-    bookName.value
-  );
+  History.value[bookId.value] = [currentBookChapterIndex.value, bookName.value];
+  recomputIsBookCollected();
+  saveOneHistory(bookId.value, currentBookChapterIndex.value, bookName.value);
 };
 
 const disLikeABook = () => {
   delete History.value[bookId.value];
+  recomputIsBookCollected();
   removeOneHistory(bookId.value);
 };
 
@@ -136,10 +136,18 @@ onBeforeMount(() => {
 
 <template>
   <div class="buttons">
-    <span class="button" v-if="!isBookCollected()" @click="likeABook()">收藏</span>
-    <span class="button" v-if="isBookCollected()" @click="disLikeABook()">移出收藏</span>
-    <span class="button" @click="showBookChapters = true">显示目录</span>
-    <span class="button" v-if="currentBookChapterIndex > 0" @click="addChapterIndex(-1)">
+    <span class="button" v-if="!isBookCollected" @click="likeABook()"
+      >收藏</span
+    >
+    <span class="button" v-if="isBookCollected" @click="disLikeABook()"
+      >取消收藏</span
+    >
+    <span class="button" @click="showBookChapters = true">目录</span>
+    <span
+      class="button"
+      v-if="currentBookChapterIndex > 0"
+      @click="addChapterIndex(-1)"
+    >
       上一章
     </span>
   </div>
@@ -154,7 +162,8 @@ onBeforeMount(() => {
     :index="currentBookChapterIndex"
     @setChapterIndex="setChapterIndex"
   />
-  <div class="buttons">
+  <div class="buttons end">
+    <span class="false-button"></span>
     <span class="button" @click="addChapterIndex(1)">下一章</span>
   </div>
 </template>

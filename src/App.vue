@@ -38,9 +38,10 @@ onBeforeMount(() => loadRemoteConfig());
 
 <style>
 :root {
-  --color-bg: #fffef8;
+  --color-bg: #fffdf2;
   --color-link: #5698c3;
   --color-text: #393733;
+  --color-sub-text: #4d4a46;
 }
 html {
   font-size: 18px;
@@ -59,24 +60,38 @@ html {
   
 }
 
+
 .buttons {
   display: flex;
-  justify-content: right;
+  width: 100%;
+  justify-content: space-between;
   padding: 1rem;
 }
 
 .button {
+  display: flex;
+  align-items: center;
   cursor: pointer;
+  font-size: 1rem;
   margin-left: 0.25rem;
-  padding: 0.5rem 0.75rem;
+  padding: 0.25rem 0.75rem;
   color: var(--color-link);
   border: 0.5px solid var(--color-link);
-  color: var(--color-link);
-  border-radius: 0.5rem;
 }
+
 
 .button * {
   color: var(--color-link);
+}
+
+.false-button {
+  font-size: 1rem;
+  padding: 0.5rem 0.75rem;
+  color: var(--color-link);
+}
+
+.end {
+  margin-bottom: 2rem;
 }
 
 .v-enter-active {

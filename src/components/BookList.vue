@@ -36,8 +36,7 @@ const props = defineProps<{
 .books {
     margin: 0;
     padding: 1rem;
-    transition: all ;
-    transition-duration: 0.2s;
+    transition: all 0.3s ease;
 }
 
 .book {
@@ -67,8 +66,9 @@ const props = defineProps<{
 
 .book-brief {
     font-size: 1rem;
-    line-height: 1rem;
+    line-height: 1.25rem;
     font-weight: lighter;
     margin-top: .25rem;
+    color: var(--color-sub-text);
 }
 </style>
