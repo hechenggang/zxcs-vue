@@ -35,15 +35,17 @@ chapterCurrentNavPage.value = Math.floor(props.index / 50);
   <div class="chapters-container">
     <ul class="chapters">
       <li
-        class="chapter"
         v-for="chapter in chapterSliceArrayList"
+        :class="
+          props.index === chapter[0] ? 'chapter active-chapter' : 'chapter'
+        "
         @click="emit('setChapterIndex', chapter[0])"
         :key="chapter[0]"
       >
-        <span>{{ chapter[1] }}</span>
+        {{ chapter[1] }}
       </li>
     </ul>
-    <select class="chapters-page-select" v-model="chapterCurrentNavPage">
+    <select class="chapters-page-select shadow" v-model="chapterCurrentNavPage">
       <option v-for="page in chapterNavPages" :key="page" :value="page">
         第 {{ page + 1 }} 页
       </option>
@@ -69,9 +71,8 @@ chapterCurrentNavPage.value = Math.floor(props.index / 50);
   left: 0;
   width: 100%;
   height: 6%;
-  box-shadow: 0 0px 5px rgba(0, 0, 0, 0.2);
-  border: 1px solid var(--color-link);
   cursor: pointer;
+  color: var(--color-link);
 }
 
 .chapters {
@@ -89,5 +90,19 @@ chapterCurrentNavPage.value = Math.floor(props.index / 50);
   font-size: 1rem;
   line-height: 1.5rem;
   cursor: pointer;
+  color: var(--color-link);
+}
+
+.chapter * {
+  color: var(--color-link);
+}
+
+.active-chapter {
+  border-left: 0.25rem solid var(--color-link);
+  padding-left: 0.5rem;
+}
+
+.shadow {
+  box-shadow: 0 0px 5px rgba(0, 0, 0, 0.2);
 }
 </style>

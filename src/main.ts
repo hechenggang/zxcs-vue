@@ -6,6 +6,13 @@ import Image404 from "@/assets/404.png";
 
 const app = createApp(App)
 
+// make v-focus useable any component
+app.directive('focus', {
+  mounted(el:HTMLElement){
+    el.focus()
+  }
+})
+
 app.use(VueLazyLoad,{
     loading: Image404,
     error: Image404

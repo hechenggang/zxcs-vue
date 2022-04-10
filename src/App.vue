@@ -31,16 +31,20 @@ onBeforeMount(() => loadRemoteConfig());
 
 <template>
   <RouterView />
-  <Loading v-if="FullscreenLoading" />
+  <Transition>
+    <Loading v-if="FullscreenLoading" />
+  </Transition>
 </template>
 
 <style>
 :root {
   --color-bg: #fffef8;
-  --color-link: #bbb5ac;
+  --color-link: #5698c3;
   --color-text: #393733;
 }
-
+html {
+  font-size: 18px;
+}
 * {
   margin: 0;
   padding: 0;
@@ -51,6 +55,8 @@ onBeforeMount(() => loadRemoteConfig());
   box-sizing: border-box;
   color: var(--color-text);
   background-color: var(--color-bg);
+  font-family: "LXGW WenKai Screen R", sans-serif;
+  
 }
 
 .buttons {
@@ -58,12 +64,32 @@ onBeforeMount(() => loadRemoteConfig());
   justify-content: right;
   padding: 1rem;
 }
-button {
+
+.button {
   cursor: pointer;
   margin-left: 0.25rem;
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--color-link);
+  padding: 0.5rem 0.75rem;
+  color: var(--color-link);
+  border: 0.5px solid var(--color-link);
+  color: var(--color-link);
+  border-radius: 0.5rem;
 }
 
+.button * {
+  color: var(--color-link);
+}
 
+.v-enter-active {
+  transition: all 0.12s ease-in;
+}
+
+.v-leave-active {
+  transition: all 0.12s ease-out;
+}
+
+.v-enter-from,
+.v-leave-to {
+  transform: translateX(0.5rem);
+  opacity: 0;
+}
 </style>

@@ -27,7 +27,7 @@ type Chapters = Array<Chapter>
 
 const localConfig = useLocalStorage("remoteConfig", {} as remoteConfig)
 const localApiCode = useLocalStorage("x-api-code", "")
-const History = useLocalStorage<Record<string,[string,string]>>("history", {})
+const History = useLocalStorage<Record<string,[number,string]>>("history", {})
 const FullscreenLoading = ref(false)
 const Title = useTitle("简单全本")
 

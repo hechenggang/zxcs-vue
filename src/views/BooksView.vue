@@ -91,44 +91,56 @@ onMounted(() => {
 
 <template>
   <div class="buttons">
-    <button
+    <span
+      class="button"
       v-if="!showBooksSearchBox && !showHistory"
       @click="swichShowSearchBox()"
     >
       搜索
-    </button>
-    <button
+    </span>
+    <span
+      class="button"
       v-if="showBooksSearchBox && !showHistory"
       @click="swichShowSearchBox()"
     >
       关闭搜索
-    </button>
+    </span>
 
-    <button v-if="!showHistory" @click="swichShowHistory()">收藏夹</button>
-    <button v-if="showHistory" @click="swichShowHistory()">关闭收藏夹</button>
+    <span class="button" v-if="!showHistory" @click="swichShowHistory()"
+      >收藏夹</span
+    >
+    <span class="button" v-if="showHistory" @click="swichShowHistory()"
+      >关闭收藏夹</span
+    >
 
-    <button
+    <span
+      class="button"
       v-if="currentBooksOffset > 0 && !showHistory"
       @click="changeOffset(-1)"
     >
       上一页
-    </button>
+    </span>
   </div>
 
-  <div v-if="showBooksSearchBox" class="buttons search">
-    <input
-      class="search-input"
-      type="text"
-      v-model="currentBooksKeyword"
-      autofocus
-    />
-    <button @click="requestBooks()">搜索</button>
-  </div>
+  <Transition>
+    <div v-if="showBooksSearchBox" class="buttons search">
+      <input
+        class="search-input"
+        type="text"
+        placeholder="在这里输入书名或作者"
+        v-model="currentBooksKeyword"
+        v-focus
+      />
 
+      <span class="button" @click="requestBooks()">搜索</span>
+    </div>
+  </Transition>
   <BookList :books="books" />
 
   <div class="buttons">
-    <button v-if="!showHistory" @click="changeOffset(1)">下一页</button>
+    <span class="button" v-if="!showHistory" @click="changeOffset(1)"
+      >下一页</span
+    >
   </div>
 </template>
 

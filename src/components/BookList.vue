@@ -61,13 +61,14 @@ const props = defineProps<{
 
 .book-name {
     font-size: 1.25rem;
-    line-height: 1.75rem;
-    color: #5698c3;
-    font-weight: bold;
+    line-height: 2rem;
+    color: var(--color-link);
 }
 
 .book-brief {
-    font-size: .8rem;
+    font-size: 1rem;
     line-height: 1rem;
+    font-weight: lighter;
+    margin-top: .25rem;
 }
 </style>
