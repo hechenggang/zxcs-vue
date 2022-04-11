@@ -22,20 +22,11 @@ function swichShowHistory() {
   showHistory.value = !showHistory.value;
   if (showHistory.value) {
     tempBooks.value = books.value;
-    books.value = [];
-
-    // give it a time to wait tansition work
-    setTimeout(() => {
-      books.value = retypedHistory.value;
-      FullscreenLoading.value = false;
-    }, 200);
+    books.value = retypedHistory.value;
+    FullscreenLoading.value = false;
   } else {
-    books.value = [];
-    // books.value = tempBooks.value;
-    setTimeout(() => {
-      books.value = tempBooks.value;
-      FullscreenLoading.value = false;
-    }, 200);
+    books.value = tempBooks.value;
+    FullscreenLoading.value = false;
   }
 }
 

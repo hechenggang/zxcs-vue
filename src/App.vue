@@ -82,7 +82,6 @@ html {
   align-items: center;
   cursor: pointer;
   font-size: 1rem;
-  margin-left: 0.25rem;
   padding: 0.25rem 0.75rem;
   color: var(--color-link);
   border: 0.5px solid var(--color-link);

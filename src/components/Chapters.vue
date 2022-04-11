@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineEmits, computed, defineProps } from "vue";
+import { ref, defineEmits, computed, defineProps, onMounted } from "vue";
 import type { Chapters } from "../tools/store";
 
 const props = defineProps<{
@@ -9,6 +9,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: "setChapterIndex", index: number): void;
+  (e: "closeShowBookChapters"): void;
 }>();
 
 const chapterNavPages = computed(() =>
@@ -29,10 +30,29 @@ const chapterSliceArrayList = computed(() =>
 );
 
 chapterCurrentNavPage.value = Math.floor(props.index / 50);
+
+onMounted(() => {
+  // on chapters mounted , scroll to where active chapter place
+  // but it should * 1.75 to make top or bottom both can be display in view
+  document.documentElement.scrollTop =
+    (window.screen.height * (props.index % chapterSliceStep.value)) /
+    chapterSliceStep.value * 1.75;
+});
 </script>
 
 <template>
   <div class="chapters-container">
+    <div class="chapters-page-select shadow">
+      <span class="button" @click="emit('closeShowBookChapters')">
+        关闭目录
+      </span>
+      <select class="button" v-model="chapterCurrentNavPage">
+        <option v-for="page in chapterNavPages" :key="page" :value="page">
+          第 {{ page + 1 }} 页
+        </option>
+      </select>
+    </div>
+
     <ul class="chapters">
       <li
         v-for="chapter in chapterSliceArrayList"
@@ -45,11 +65,6 @@ chapterCurrentNavPage.value = Math.floor(props.index / 50);
         {{ chapter[1] }}
       </li>
     </ul>
-    <select class="chapters-page-select shadow" v-model="chapterCurrentNavPage">
-      <option v-for="page in chapterNavPages" :key="page" :value="page">
-        第 {{ page + 1 }} 页
-      </option>
-    </select>
   </div>
 </template>
 
@@ -57,31 +72,21 @@ chapterCurrentNavPage.value = Math.floor(props.index / 50);
 .chapters-container {
   display: flex;
   flex-direction: column;
-  position: fixed;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
 }
 
 .chapters-page-select {
-  padding: 0.5rem;
-  position: fixed;
-  bottom: 0;
-  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
-  height: 6%;
-  cursor: pointer;
   color: var(--color-link);
+  padding: 1rem;
 }
 
 .chapters {
   padding: 1rem;
-  position: fixed;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 94%;
   overflow: auto;
 }
 

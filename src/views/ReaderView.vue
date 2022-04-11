@@ -42,7 +42,9 @@ const requestBookChapters = () => {
   FullscreenLoading.value = true;
   getBookChapters(bookId.value).then((resp) => {
     parseJson(resp, (jsonData: any) => {
-      if (!jsonData){return}
+      if (!jsonData) {
+        return;
+      }
       console.log("getBookChapters", jsonData);
       currentBookChapters.value = jsonData.chapters;
       FullscreenLoading.value = false;
@@ -55,7 +57,9 @@ const requestBookChapter = () => {
   FullscreenLoading.value = true;
   getBookChapter(bookId.value, currentBookChapterIndex.value).then((resp) => {
     parseJson(resp, (jsonData: any) => {
-      if (!jsonData){return}
+      if (!jsonData) {
+        return;
+      }
       console.log("getBookChapter", jsonData);
       currentBookChapterArray.value = jsonData.chapter;
       FullscreenLoading.value = false;
@@ -78,7 +82,9 @@ const requestBookHistory = () => {
   FullscreenLoading.value = true;
   getOneHistory(bookId.value).then((resp) => {
     parseJson(resp, (jsonData: any) => {
-      if (!jsonData){return}
+      if (!jsonData) {
+        return;
+      }
       console.log("getOneHistory", jsonData);
       //   [200,["4","bookName"]]
       let tempIndex = jsonData[1][0];
@@ -122,6 +128,10 @@ function setChapterIndex(index: number) {
   showBookChapters.value = false;
 }
 
+function closeShowBookChapters() {
+  showBookChapters.value = false;
+}
+
 // watch chapter index, load new chapter content when index changed
 watch(currentBookChapterIndex, () => {
   requestBookChapter();
@@ -138,36 +148,35 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <div class="buttons">
-    <span class="button" v-if="!isBookCollected" @click="likeABook()"
-      >收藏</span
-    >
-    <span class="button" v-if="isBookCollected" @click="disLikeABook()"
-      >取消收藏</span
-    >
-    <span class="button" @click="showBookChapters = true">目录</span>
-    <span
-      class="button"
-      v-if="currentBookChapterIndex > 0"
-      @click="addChapterIndex(-1)"
-    >
-      上一章
-    </span>
+  <div class="text-box" v-if="!showBookChapters">
+    <div class="buttons">
+      <span class="button" @click="showBookChapters = true">目录</span>
+      <span class="button" v-if="!isBookCollected" @click="likeABook()"
+        >收藏</span
+      >
+      <span class="button" v-if="isBookCollected" @click="disLikeABook()"
+        >取消收藏</span
+      >
+      <span
+        class="button"
+        v-if="currentBookChapterIndex > 0"
+        @click="addChapterIndex(-1)"
+      >
+        上一章
+      </span>
+    </div>
+    <ComponentChapterText ref="text" :chapter="currentBookChapterArray" />
+    <div class="buttons end">
+      <span class="false-button"></span>
+      <span class="button" @click="addChapterIndex(1)">下一章</span>
+    </div>
   </div>
-  <ComponentChapterText
-    v-if="!showBookChapters"
-    ref="text"
-    :chapter="currentBookChapterArray"
-  />
   <ComponentChapters
     v-if="showBookChapters"
     :chapters="currentBookChapters"
     :index="currentBookChapterIndex"
     @setChapterIndex="setChapterIndex"
+    @closeShowBookChapters="closeShowBookChapters"
   />
-  <div class="buttons end">
-    <span class="false-button"></span>
-    <span class="button" @click="addChapterIndex(1)">下一章</span>
-  </div>
 </template>
 
