@@ -1,42 +1,6 @@
 <script setup lang="ts">
-import { ref, onBeforeMount } from "vue";
-import { RouterLink, RouterView, useRouter } from "vue-router";
-import { Get } from "./tools";
-import type { remoteConfig } from "./tools/store";
-import { FullscreenLoading, localApiCode } from "./tools/store";
+import { FullscreenLoading } from "./tools/store";
 import Loading from "./components/Loading.vue";
-
-
-
-const router = useRouter();
-
-const checkApiCode = (localConfig: remoteConfig) => {
-  if (!localApiCode.value) {
-    location.assign(localConfig.loginUri);
-  }
-};
-
-async function loadRemoteConfig() {
-  // load remote config
-  try {
-    const resp = await Get("https://worker.imhcg.cn/zxcsRemoteConfig");
-    if (resp.status !== 200) {
-      alert("加载远程配置失败，错误代码为" + resp.status);
-    } else {
-      console.log("loadRemoteConfig success", resp);
-      const data: remoteConfig = await resp.json();
-      localStorage.setItem("remoteConfig", JSON.stringify(data));
-      checkApiCode(data);
-    }
-  } catch (error) {
-    console.log(error);
-    alert("加载远程配置失败，请联系管理员");
-  }
-}
-
-// we should notice that, the code in app.vue will run on each page flush,because it is root node
-// so we just load remote config and check code exist
-onBeforeMount(() => loadRemoteConfig());
 </script>
 
 

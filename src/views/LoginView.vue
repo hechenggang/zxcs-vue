@@ -11,7 +11,7 @@ function checkApiCode() {
   const inputApiCode: string = route.query.code as string;
   if (inputApiCode) {
     // if x-api-code in route query args, cache it, and use by useLocalStorage
-    localStorage.setItem("x-api-code", inputApiCode);
+    localApiCode.value = inputApiCode;
   } else {
     // if not, redirect to account service
     if (!localApiCode.value) {

@@ -137,7 +137,7 @@ onMounted(() => {
   <Transition>
     <div v-if="showBooksSearchBox" class="buttons search">
       <input
-        class="search-input"
+        class="search-input button"
         type="text"
         placeholder="在这里输入书名或作者"
         v-model="currentBooksKeyword"
@@ -166,10 +166,8 @@ onMounted(() => {
 }
 .search-input {
   flex-grow: 1;
-  cursor: pointer;
-  width: 50%;
-  padding: 0.5rem 1rem;
-  border: 0.5px solid var(--color-link);
+  font-size: 0.9rem;
+  margin-right: .25rem;
 }
 .no-padding {
   padding: 0;
