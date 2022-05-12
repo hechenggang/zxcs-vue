@@ -9,7 +9,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: "setChapterIndex", index: number): void;
-  (e: "closeShowBookChapters"): void;
+  (e: "switchBookChaptersVisible"): void;
 }>();
 
 const chapterNavPages = computed(() =>
@@ -35,15 +35,16 @@ onMounted(() => {
   // on chapters mounted , scroll to where active chapter place
   // but it should * 1.75 to make top or bottom both can be display in view
   document.documentElement.scrollTop =
-    (window.screen.height * (props.index % chapterSliceStep.value)) /
-    chapterSliceStep.value * 1.75;
+    ((window.screen.height * (props.index % chapterSliceStep.value)) /
+      chapterSliceStep.value) *
+    1.75;
 });
 </script>
 
 <template>
   <div class="chapters-container">
-    <div class="chapters-page-select shadow">
-      <span class="button" @click="emit('closeShowBookChapters')">
+    <div class="chapters-page-select shadow top-bar">
+      <span class="button" @click="emit('switchBookChaptersVisible')">
         关闭目录
       </span>
       <select class="button" v-model="chapterCurrentNavPage">
@@ -79,13 +80,12 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
   color: var(--color-link);
   padding: 1rem;
 }
 
 .chapters {
-  padding: 1rem;
+  padding: 5rem 1rem;
   width: 100%;
   overflow: auto;
 }
@@ -96,6 +96,7 @@ onMounted(() => {
   line-height: 1.5rem;
   cursor: pointer;
   color: var(--color-link);
+
 }
 
 .chapter * {
@@ -103,6 +104,7 @@ onMounted(() => {
 }
 
 .active-chapter {
+  border: 1px solid var(--color-link);
   border-left: 0.25rem solid var(--color-link);
   padding-left: 0.5rem;
 }

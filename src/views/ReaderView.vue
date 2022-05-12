@@ -16,12 +16,18 @@ import { FullscreenLoading, Title, History } from "../tools/store";
 import ComponentChapters from "../components/Chapters.vue";
 import ComponentChapterText from "../components/ChapterText.vue";
 
+const isOldGuy = localStorage.getItem('isOldGuy')
+if (!isOldGuy) {
+  alert('欢迎你，新朋友。\n如果你需要唤起或者关闭控制菜单，都只需要点击文字区域就可以。\n祝你阅读愉快。')
+  localStorage.setItem('isOldGuy',"1")
+}
 const route = useRoute();
 const bookId = ref<string>(route.query.id as string);
 const bookName = ref<string>(route.query.name as string);
 const currentBookChapters = ref<Chapters>([]);
 const currentBookChapterArray = ref<Array<string>>([]);
-const showBookChapters = ref(false);
+const bookChaptersVisible = ref(false);
+const controlVisible = ref(false);
 Title.value = bookName.value + " - 简单全本";
 
 const isBookCollected = ref(false);
@@ -112,6 +118,14 @@ const disLikeABook = () => {
   removeOneHistory(bookId.value);
 };
 
+
+function setChapterIndex(index: number) {
+  currentBookChapterIndex.value = index;
+  bookChaptersVisible.value = false;
+  controlVisible.value = false;
+}
+
+
 function addChapterIndex(num: number) {
   const next = currentBookChapterIndex.value + num;
   if (next >= currentBookChapters.value.length) {
@@ -120,16 +134,15 @@ function addChapterIndex(num: number) {
   if (next < 0) {
     return;
   }
-  currentBookChapterIndex.value = next;
+  setChapterIndex(next)
 }
 
-function setChapterIndex(index: number) {
-  currentBookChapterIndex.value = index;
-  showBookChapters.value = false;
+function switchBookChaptersVisible() {
+  bookChaptersVisible.value = !bookChaptersVisible.value;
 }
 
-function closeShowBookChapters() {
-  showBookChapters.value = false;
+function switchControlVisible() {
+  controlVisible.value = !controlVisible.value;
 }
 
 // watch chapter index, load new chapter content when index changed
@@ -148,15 +161,22 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <div class="text-box" v-if="!showBookChapters">
-    <div class="buttons">
-      <span class="button" @click="showBookChapters = true">目录</span>
+  <div class="text-box" v-if="!bookChaptersVisible">
+    <div class="buttons top-bar shadow" v-if="controlVisible">
+      <span class="button" @click="bookChaptersVisible = true">目录</span>
       <span class="button" v-if="!isBookCollected" @click="likeABook()"
-        >收藏</span
+        >加入收藏</span
       >
       <span class="button" v-if="isBookCollected" @click="disLikeABook()"
-        >取消收藏</span
+        >已收藏</span
       >
+    </div>
+    <ComponentChapterText
+      ref="text"
+      :chapter="currentBookChapterArray"
+      @switchControlVisible="switchControlVisible"
+    />
+    <div class="buttons bottom-bar shadow" v-if="controlVisible">
       <span
         class="button"
         v-if="currentBookChapterIndex > 0"
@@ -164,19 +184,16 @@ onBeforeMount(() => {
       >
         上一章
       </span>
-    </div>
-    <ComponentChapterText ref="text" :chapter="currentBookChapterArray" />
-    <div class="buttons end">
-      <span class="false-button"></span>
+      <span class="false-button" v-if="currentBookChapterIndex == 0"></span>
       <span class="button" @click="addChapterIndex(1)">下一章</span>
     </div>
   </div>
   <ComponentChapters
-    v-if="showBookChapters"
+    v-if="bookChaptersVisible"
     :chapters="currentBookChapters"
     :index="currentBookChapterIndex"
     @setChapterIndex="setChapterIndex"
-    @closeShowBookChapters="closeShowBookChapters"
+    @switchBookChaptersVisible="switchBookChaptersVisible"
   />
 </template>
 

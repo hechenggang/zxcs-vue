@@ -11,6 +11,7 @@
     "@vueuse/core": "^8.2.5",
     "vue": "^3.2.31",
     "vue-router": "^4.0.14",
+    "vue-starport": "^0.2.10",
     "vue3-lazyload": "^0.2.5-beta"
   },
   "devDependencies": {

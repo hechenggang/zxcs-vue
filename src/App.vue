@@ -5,7 +5,7 @@ import Loading from "./components/Loading.vue";
 
 
 <template>
-  <RouterView />
+    <RouterView />
   <Transition>
     <Loading v-if="FullscreenLoading" />
   </Transition>
@@ -31,6 +31,7 @@ html {
   box-sizing: border-box;
   color: var(--color-text);
   background-color: var(--color-bg);
+  cursor: default;
   font-family: "LXGW WenKai Screen R", sans-serif;
 }
 
@@ -44,7 +45,6 @@ html {
 .button {
   display: flex;
   align-items: center;
-  cursor: pointer;
   font-size: 1rem;
   padding: 0.25rem 0.75rem;
   color: var(--color-link);
@@ -63,6 +63,36 @@ html {
 
 .end {
   margin-bottom: 2rem;
+}
+
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+.fixed-full {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  flex-direction: column;
 }
 
 .v-enter-active {

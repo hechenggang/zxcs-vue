@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { RouterLink } from "vue-router";
+
 import { getBooks, parseJson, getAllHistory } from "../tools/request";
 import type { Books } from "../tools/store";
 import { onMounted } from "vue";
@@ -48,7 +49,7 @@ const retypedHistory = computed(() => {
   Object.keys(History.value).forEach((id) => {
     tempHistorys.push({
       book_author: null,
-      book_brief: "当前进度 " + History.value[id][0],
+      book_brief: "当前进度 " + Number(History.value[id][0])+1,
       book_id: id,
       book_name: History.value[id][1],
     });
@@ -100,7 +101,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="buttons">
+  <div class="buttons top-bar shadow">
     <span
       class="button"
       v-if="!showBooksSearchBox && !showHistory"
@@ -120,22 +121,16 @@ onMounted(() => {
       >收藏夹</span
     >
 
-    <div class="buttons no-padding" v-if="showHistory">
-      <span class="false-button"></span>
+    <div class="buttons top-bar shadow" v-if="showHistory">
+      <span class="flex-center book-brief">共 {{books.length}} 本书</span>
       <span class="button" @click="swichShowHistory()">关闭收藏夹</span>
     </div>
 
-    <span
-      class="button"
-      v-if="currentBooksOffset > 0 && !showHistory"
-      @click="changeOffset(-10)"
-    >
-      上一页
-    </span>
+    
   </div>
 
   <Transition>
-    <div v-if="showBooksSearchBox" class="buttons search">
+    <div v-if="showBooksSearchBox" class="buttons search top-bar">
       <input
         class="search-input button"
         type="text"
@@ -152,7 +147,15 @@ onMounted(() => {
   </Transition>
 
   <div class="buttons end">
-    <span class="false-button"></span>
+    <span
+      class="button"
+      v-if="currentBooksOffset > 0 && !showHistory"
+      @click="changeOffset(-10)"
+    >
+      上一页
+    </span>
+    
+    <span class="false-button" v-if="currentBooksOffset == 0 && !showHistory"></span>
     <span class="button" v-if="!showHistory" @click="changeOffset(10)"
       >下一页</span
     >
@@ -163,9 +166,11 @@ onMounted(() => {
 .search {
   display: flex;
   width: 100%;
+  top: 3rem;
+  padding: 0.25rem 1rem;
 }
 .search-input {
-  flex-grow: 1;
+  flex: 1;
   font-size: 0.9rem;
   margin-right: .25rem;
 }

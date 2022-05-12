@@ -49,21 +49,7 @@
 </template>
 
 <style>
-.fixed-full {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
 
-.flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: nowrap;
-  flex-direction: column;
-}
 
 .loading {
   background-color: var(--color-bg);
