@@ -49,7 +49,7 @@ const retypedHistory = computed(() => {
   Object.keys(History.value).forEach((id) => {
     tempHistorys.push({
       book_author: null,
-      book_brief: "当前进度 " + Number(History.value[id][0])+1,
+      book_brief: "当前进度 " + (Number(History.value[id][0])+1),
       book_id: id,
       book_name: History.value[id][1],
     });
