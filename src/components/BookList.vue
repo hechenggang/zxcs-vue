@@ -51,7 +51,8 @@ const props = defineProps<{
 .books {
 
   margin: 0;
-  padding: 6rem 1rem;
+  padding: 5rem 1rem;
+  padding-bottom: 1rem;
   transition: all 0.3s ease;
   overflow-x: hidden;
 }
@@ -60,7 +61,9 @@ const props = defineProps<{
   display: flex;
   justify-content: left;
   padding: 0.75rem 0;
-  border-bottom: 0.2rem solid #ffffff;
+  /* border-bottom: 0.2rem solid #ffffff; */
+  border-bottom: 1px solid #ededed;
+
 }
 
 

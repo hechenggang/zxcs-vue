@@ -43,9 +43,9 @@ onMounted(() => {
 
 <template>
   <div class="chapters-container">
-    <div class="chapters-page-select shadow top-bar">
+    <div class="buttons shadow top-bar">
       <span class="button" @click="emit('switchBookChaptersVisible')">
-        关闭目录
+       <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" ><path d="M568 515.008l254.016-255.008q12-11.008 12-27.488t-11.488-28-28-11.488-27.488 12l-255.008 254.016-255.008-254.016q-11.008-12-27.488-12t-28 11.488-11.488 28 12 27.488l254.016 255.008-254.016 255.008q-12 11.008-12 27.488t11.488 28 28 11.488 27.488-12l255.008-255.008 255.008 255.008q11.008 12 27.488 12t28-11.488 11.488-28-12-27.488z"></path></svg>
       </span>
       <select class="button" v-model="chapterCurrentNavPage">
         <option v-for="page in chapterNavPages" :key="page" :value="page">
@@ -76,16 +76,10 @@ onMounted(() => {
   width: 100%;
 }
 
-.chapters-page-select {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: var(--color-link);
-  padding: 1rem;
-}
+
 
 .chapters {
-  padding: 6rem 1rem;
+  padding: 5rem 1rem;
   width: 100%;
   overflow: auto;
 }
@@ -96,6 +90,8 @@ onMounted(() => {
   line-height: 1.5rem;
   cursor: pointer;
   color: var(--color-link);
+  border-bottom: 1px solid #ededed;
+
 
 }
 
