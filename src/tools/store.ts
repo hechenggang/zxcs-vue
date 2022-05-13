@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { useLocalStorage, useMouse, useTitle } from '@vueuse/core'
+import { useLocalStorage, useTitle } from '@vueuse/core'
 
 type remoteConfig = {
     "baseUri": string,
@@ -36,6 +36,7 @@ const localConfig = useLocalStorage("remoteConfig", {
         "history":"/history"
     }
 })
+
 const localApiCode = useLocalStorage("x-api-code", "")
 const History = useLocalStorage<Record<string,[number,string]>>("history", {})
 const FullscreenLoading = ref(false)

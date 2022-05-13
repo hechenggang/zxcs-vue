@@ -14,7 +14,7 @@ const parseJson = (resp: Response, callback: Function) => {
     } else {
         callback(null);
         FullscreenLoading.value = false;
-        alert("错误代码 " + resp.status);
+        alert("抱歉，这本书暂时还未准备好，请稍后再试。 \n错误代码：" + resp.status);
     }
 };
 

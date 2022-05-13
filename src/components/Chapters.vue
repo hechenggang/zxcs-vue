@@ -85,7 +85,7 @@ onMounted(() => {
 }
 
 .chapters {
-  padding: 5rem 1rem;
+  padding: 6rem 1rem;
   width: 100%;
   overflow: auto;
 }
@@ -109,7 +109,5 @@ onMounted(() => {
   padding-left: 0.5rem;
 }
 
-.shadow {
-  box-shadow: 0 0px 5px rgba(0, 0, 0, 0.2);
-}
+
 </style>

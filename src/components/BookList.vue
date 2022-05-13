@@ -27,6 +27,7 @@ const props = defineProps<{
                 b.book_id +
                 '.webp'
               "
+              class="shadow book-cover-img"
             />
           </RouterLink>
         
@@ -48,9 +49,11 @@ const props = defineProps<{
 
 <style >
 .books {
+
   margin: 0;
-  padding: 5rem 1rem;
+  padding: 6rem 1rem;
   transition: all 0.3s ease;
+  overflow-x: hidden;
 }
 
 .book {
@@ -60,12 +63,6 @@ const props = defineProps<{
   border-bottom: 0.2rem solid #ffffff;
 }
 
-.cover img {
-  display: inline-block;
-  width: 7rem;
-  margin-right: 0.5rem;
-  border: 0.2rem solid #ffffff;
-}
 
 .bookinfo {
   display: flex;
@@ -85,5 +82,11 @@ const props = defineProps<{
   font-weight: lighter;
   margin-top: 0.25rem;
   color: var(--color-sub-text);
+}
+.book-cover-img {
+    display: inline-block;
+  width: 7rem;
+  margin-right: 0.5rem;
+  border: 0.2rem solid #ffffff;
 }
 </style>
