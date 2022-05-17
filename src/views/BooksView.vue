@@ -191,6 +191,7 @@ onMounted(() => {
 <style>
 .search-input {
   flex: 1;
+  width: 100%;
   margin-right: 0.25rem;
   padding: 0.25rem;
   color: var(--color-link);
