@@ -6,15 +6,28 @@ import { Get } from "./";
 
 
 const parseJson = (resp: Response, callback: Function) => {
-    if (resp.status === 200) {
-        resp.json().then((data) => {
-            callback(data);
-            FullscreenLoading.value = false;
-        });
-    } else {
-        callback(null);
-        FullscreenLoading.value = false;
-        alert("抱歉，你请求的内容还未准备好，请稍后再试。 \n错误代码：" + resp.status);
+    FullscreenLoading.value = false;
+    switch (resp.status) {
+        case 200:
+            resp.json().then((data) => {
+                callback(data);
+            });
+            break;
+        case 404:
+            alert("抱歉，你请求的内容还未准备好，请稍后再试。 \n错误代码：" + resp.status);
+            location.assign('/#/')
+            break;
+        case 400:
+            location.assign('/#/')
+            break;
+        case 429:
+            alert("抱歉，您请求的频率过快，请稍后再试。 \n错误代码：" + resp.status);
+            location.assign('/#/')
+            break;
+        default:
+            alert("抱歉，服务器遇到了错误，请稍后再试。 \n错误代码：" + resp.status);
+            location.assign('/#/')
+            break;
     }
 };
 

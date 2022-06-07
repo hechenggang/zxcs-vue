@@ -27,7 +27,7 @@ type Chapters = Array<Chapter>
 
 const localConfig = useLocalStorage("remoteConfig", {
     "baseUri": "https://zxcs.imhcg.cn/api",
-    "loginUri": "https://account.imhcg.cn/to/c5129aaf0c34ae93d82a60f8888d9945",
+    "loginUri": "https://account.imhcg.cn/to/8bb1dab52c404b50154e5880e28c2db8",
     "api": {
         "books":"/books",
         "cover":"/static/cover@webp/",

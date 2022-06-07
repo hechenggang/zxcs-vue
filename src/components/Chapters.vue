@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, defineEmits, computed, defineProps, onMounted } from "vue";
 import type { Chapters } from "../tools/store";
+import IconClose from "./icon/close.vue";
 
 const props = defineProps<{
   chapters: Chapters;
@@ -36,8 +37,10 @@ onMounted(() => {
   // but it should * 1.75 to make top or bottom both can be display in view
   document.documentElement.scrollTop =
     ((window.screen.height * (props.index % chapterSliceStep.value)) /
-      chapterSliceStep.value) *
-    1.75;
+      chapterSliceStep.value)*2;
+  document.body.scrollTop =
+    ((window.screen.height * (props.index % chapterSliceStep.value)) /
+      chapterSliceStep.value)*2;
 });
 </script>
 
@@ -45,7 +48,8 @@ onMounted(() => {
   <div class="chapters-container">
     <div class="buttons shadow top-bar">
       <span class="button" @click="emit('switchBookChaptersVisible')">
-       <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" ><path d="M568 515.008l254.016-255.008q12-11.008 12-27.488t-11.488-28-28-11.488-27.488 12l-255.008 254.016-255.008-254.016q-11.008-12-27.488-12t-28 11.488-11.488 28 12 27.488l254.016 255.008-254.016 255.008q-12 11.008-12 27.488t11.488 28 28 11.488 27.488-12l255.008-255.008 255.008 255.008q11.008 12 27.488 12t28-11.488 11.488-28-12-27.488z"></path></svg>
+        <IconClose/>
+
       </span>
       <select class="button" v-model="chapterCurrentNavPage">
         <option v-for="page in chapterNavPages" :key="page" :value="page">
@@ -100,7 +104,7 @@ onMounted(() => {
 }
 
 .active-chapter {
-  border: 1px solid var(--color-link);
+  /* border: 1px solid var(--color-link); */
   border-left: 0.25rem solid var(--color-link);
   padding-left: 0.5rem;
 }

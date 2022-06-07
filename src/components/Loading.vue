@@ -1,7 +1,7 @@
 <template>
   <div class="loading fixed-full flex-center">
     <svg
-      class="icon loading-icon"
+      class="icon icon-fill loading-icon"
       viewBox="0 0 1024 1024"
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
@@ -43,13 +43,14 @@
         d="M404.02073 590.180594l-89.805352 51.79976c-3.213181 1.862417-6.733355 2.742461-10.202363 2.742461-7.081279 0-13.957897-3.673669-17.744129-10.243295-5.64865-9.79304-2.292206-22.308075 7.500834-27.956725l89.795119-51.79976c9.79304-5.64865 22.308075-2.292206 27.956725 7.500834S413.81377 584.531943 404.02073 590.180594z"
       />
     </svg>
+    
   </div>
 </template>
 
 <style>
 .loading {
   background-color: var(--color-bg);
-  opacity: 0.9;
+  opacity: 0.5;
 }
 
 .loading-icon {
