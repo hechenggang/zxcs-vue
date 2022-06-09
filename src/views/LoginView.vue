@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { localConfig, localApiCode } from "../tools/store";
+import { Config, getApiCode, setApiCode } from "../tools/store";
 
 const router = useRouter();
 const route = useRoute();
@@ -11,11 +11,13 @@ function checkApiCode() {
   const inputApiCode: string = route.query.code as string;
   if (inputApiCode) {
     // if x-api-code in route query args, cache it, and use by useLocalStorage
-    localApiCode.value = inputApiCode;
+    setApiCode(inputApiCode)
+    
   } else {
     // if not, redirect to account service
-    if (!localApiCode.value) {
-      location.assign(localConfig.value!.loginUri);
+    if (!getApiCode()) {
+      location.assign(Config.loginUri);
+      return null
     }
   }
   console.log("authed. now redirect to /books");

@@ -10,8 +10,8 @@ import {
 } from "../tools/request";
 import { onBeforeMount } from "vue";
 import { useRoute } from "vue-router";
-import type { Chapters } from "../tools/store";
-import { FullscreenLoading, Title, History } from "../tools/store";
+import type { Chapters  } from "../tools/store";
+import { FullscreenLoading,getHistory,setHistory } from "../tools/store";
 
 import ComponentChapters from "../components/Chapters.vue";
 import ComponentChapterText from "../components/ChapterText.vue";
@@ -37,18 +37,18 @@ const bookChaptersVisible = ref(false);
 const controlVisible = ref(false);
 const isBookCollected = ref(false);
 
-Title.value = bookName.value + " - 简单全本";
+document.title = bookName.value + " - 简单全本";
 
 // load book status from local history
 const getBookCollectStatusFromHistory = () => {
-  isBookCollected.value = History.value.hasOwnProperty(bookId.value);
+  isBookCollected.value = getHistory().hasOwnProperty(bookId.value);
 };
 getBookCollectStatusFromHistory();
 
 // first try to find index at localstorage, as collected book
 // if not, set index to 0, as new book
 const currentBookChapterIndex = isBookCollected.value
-  ? ref(History.value[bookId.value][0])
+  ? ref(getHistory()[bookId.value][0])
   : ref(0);
 
 const requestBookChapters = () => {
@@ -80,7 +80,7 @@ const requestBookChapter = () => {
       document.body.scrollTop = 0;
       // afterget a chapter,
       // update chapter status to history api when the book is collected
-      if (History.value.hasOwnProperty(bookId.value)) {
+      if (getHistory().hasOwnProperty(bookId.value)) {
         saveOneHistory(
           bookId.value,
           currentBookChapterIndex.value,
@@ -115,13 +115,17 @@ const requestBookHistory = () => {
 };
 
 const collectBook = () => {
-  History.value[bookId.value] = [currentBookChapterIndex.value, bookName.value];
+  const history = getHistory()
+  history[bookId.value] = [currentBookChapterIndex.value, bookName.value];
+  setHistory(history);
   getBookCollectStatusFromHistory();
   saveOneHistory(bookId.value, currentBookChapterIndex.value, bookName.value);
 };
 
 const discollectBook = () => {
-  delete History.value[bookId.value];
+  const history = getHistory()
+  delete history[bookId.value];
+  setHistory(history);
   getBookCollectStatusFromHistory();
   removeOneHistory(bookId.value);
 };
@@ -169,7 +173,7 @@ watch(currentBookChapterIndex, () => {
 onBeforeMount(() => {
   requestBookChapters();
   requestBookChapter();
-  if (History.value.hasOwnProperty(bookId.value)) {
+  if (getHistory().hasOwnProperty(bookId.value)) {
     requestBookHistory();
   }
 });

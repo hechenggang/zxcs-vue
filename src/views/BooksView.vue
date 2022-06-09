@@ -5,7 +5,7 @@ import { RouterLink } from "vue-router";
 import { getBooks, parseJson, getAllHistory } from "../tools/request";
 import type { Books } from "../tools/store";
 import { onMounted } from "vue";
-import { FullscreenLoading, History, Title } from "../tools/store";
+import { FullscreenLoading,getHistory,setHistory } from "../tools/store";
 
 import BookList from "../components/BookList.vue";
 import IconClose from "../components/icon/close.vue";
@@ -14,7 +14,7 @@ import IconSearch from "../components/icon/search.vue";
 import IconArrayLeft from "../components/icon/array-left.vue";
 import IconArrayRight from "../components/icon/array-right.vue";
 
-Title.value = "书架 - 简单全本";
+document.title = "书架 - 简单全本"
 const books = ref<Books>([]);
 const tempBooks = ref<Books>([]);
 const currentBooksOffset = ref(0);
@@ -28,7 +28,7 @@ function swichbookHistoryVisible() {
   bookHistoryVisible.value = !bookHistoryVisible.value;
   if (bookHistoryVisible.value) {
     tempBooks.value = books.value;
-    books.value = retypedHistory.value;
+    books.value = getRetypedHistory.value;
     FullscreenLoading.value = false;
   } else {
     books.value = tempBooks.value;
@@ -49,14 +49,15 @@ function changeOffset(num: number) {
 }
 
 // for reuse booklist component, here try rebuild history data to match what booklist need
-const retypedHistory = computed(() => {
+const getRetypedHistory = computed(() => {
   let tempHistorys = Array();
-  Object.keys(History.value).forEach((id) => {
+  const history = getHistory();
+  Object.keys(history).forEach((book_id) => {
     tempHistorys.push({
       book_author: null,
-      book_brief: "当前进度 " + (Number(History.value[id][0]) + 1),
-      book_id: id,
-      book_name: History.value[id][1],
+      book_brief: "当前进度 " + (Number(history[book_id][0]) + 1),
+      book_id: book_id,
+      book_name: history[book_id][1],
     });
   });
   return tempHistorys;
@@ -96,7 +97,7 @@ const requestAllHistory = () => {
         return;
       }
       console.log("getAllHistory success ", jsonData);
-      History.value = jsonData.history;
+      setHistory(jsonData.history);
       FullscreenLoading.value = false;
     });
   });
@@ -106,6 +107,7 @@ const requestAllHistory = () => {
 onMounted(() => {
   requestAllHistory();
 });
+
 </script>
 
 <template>

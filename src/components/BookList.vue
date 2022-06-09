@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from "vue";
-import { localConfig } from "../tools/store";
+import { Config } from "../tools/store";
 import type { Books } from "../tools/store";
 
 const props = defineProps<{
@@ -22,8 +22,8 @@ const props = defineProps<{
           >
             <img
               v-lazy="
-                localConfig.baseUri +
-                localConfig.api.cover +
+                Config.baseUri +
+                Config.api.cover +
                 b.book_id +
                 '.webp'
               "

@@ -1,7 +1,7 @@
 
 import { useRouter } from 'vue-router'
 import { onBeforeMount } from "vue";
-import { localApiCode } from './store';
+import { getApiCode } from './store';
 
 
 
@@ -17,7 +17,7 @@ async function Post(url:string,body:BodyInit="",headers:HeadersInit={}) {
 function Get(url:string,params:Record<string,string|number>={},headers:HeadersInit={}) {
     const urlWithQuery = new URL(url);
     for (let k in params) { urlWithQuery.searchParams.append(k, String(params[k])); }
-    const mixedHeaders = Object.assign(headers,{"x-api-code":localApiCode.value})
+    const mixedHeaders = Object.assign(headers,{"x-api-code":getApiCode()})
     return fetch(urlWithQuery.toString(), {
         method: "GET",
         headers: mixedHeaders,
