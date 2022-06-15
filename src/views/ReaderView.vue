@@ -10,10 +10,11 @@ import {
 } from "../tools/request";
 import { onBeforeMount } from "vue";
 import { useRoute } from "vue-router";
-import type { Chapters  } from "../tools/store";
-import { FullscreenLoading,getHistory,setHistory } from "../tools/store";
+import type { Chapters } from "../tools/store";
+import { FullscreenLoading, getHistory, setHistory } from "../tools/store";
 
 import ComponentChapters from "../components/Chapters.vue";
+import ComponentPageCotroler from "../components/PageCotroler.vue";
 import ComponentChapterText from "../components/ChapterText.vue";
 import IconArrayLeft from "../components/icon/array-left.vue";
 import IconArrayRight from "../components/icon/array-right.vue";
@@ -21,10 +22,12 @@ import IconStar from "../components/icon/star.vue";
 import IconContent from "../components/icon/content.vue";
 
 // 首次指引
-const isOldGuy = localStorage.getItem('isOldGuy')
+const isOldGuy = localStorage.getItem("isOldGuy");
 if (!isOldGuy) {
-  alert('欢迎你，新朋友。\n如果你需要唤起或者关闭控制菜单，都只需要点击文字区域就可以。\n祝你阅读愉快。')
-  localStorage.setItem('isOldGuy',"1")
+  alert(
+    "欢迎你，新朋友。\n如果你需要唤起或者关闭控制菜单，都只需要点击文字区域就可以。\n祝你阅读愉快。"
+  );
+  localStorage.setItem("isOldGuy", "1");
 }
 
 const route = useRoute();
@@ -115,7 +118,7 @@ const requestBookHistory = () => {
 };
 
 const collectBook = () => {
-  const history = getHistory()
+  const history = getHistory();
   history[bookId.value] = [currentBookChapterIndex.value, bookName.value];
   setHistory(history);
   getBookCollectStatusFromHistory();
@@ -123,27 +126,26 @@ const collectBook = () => {
 };
 
 const discollectBook = () => {
-  const history = getHistory()
+  const history = getHistory();
   delete history[bookId.value];
   setHistory(history);
   getBookCollectStatusFromHistory();
   removeOneHistory(bookId.value);
 };
 
-const changeBookCollectStatus = ()=>{
-  if (isBookCollected.value){
-    discollectBook()
-  }else{
-    collectBook()
+const changeBookCollectStatus = () => {
+  if (isBookCollected.value) {
+    discollectBook();
+  } else {
+    collectBook();
   }
-}
+};
 
 function setChapterIndex(index: number) {
   currentBookChapterIndex.value = index;
   bookChaptersVisible.value = false;
   controlVisible.value = false;
 }
-
 
 function addChapterIndex(num: number) {
   const next = currentBookChapterIndex.value + num;
@@ -153,7 +155,7 @@ function addChapterIndex(num: number) {
   if (next < 0) {
     return;
   }
-  setChapterIndex(next)
+  setChapterIndex(next);
 }
 
 function switchBookChaptersVisible() {
@@ -180,38 +182,6 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <div class="text-box" v-if="!bookChaptersVisible">
-    <div class="buttons top-bar shadow" v-if="controlVisible">
-      <span class="button" @click="bookChaptersVisible = true">
-        <!-- 目录图标 -->
-        <IconContent/>
-      </span>
-      <span class="button"  @click="changeBookCollectStatus()">
-        <!-- 收藏图标 -->
-        <IconStar :class="isBookCollected ? 'icon-fill': ''" />
-      </span>
-    </div>
-    <ComponentChapterText
-      ref="text"
-      :chapter="currentBookChapterArray"
-      @switchControlVisible="switchControlVisible"
-    />
-    <div class="buttons bottom-bar shadow" v-if="controlVisible">
-      <span
-        class="button"
-        v-if="currentBookChapterIndex > 0"
-        @click="addChapterIndex(-1)"
-      >
-        <!-- 上一章图标 -->
-        <IconArrayLeft/>
-      </span>
-      <span class="false-button" v-if="currentBookChapterIndex == 0"></span>
-      <span class="button" @click="addChapterIndex(1)">
-        <!-- 下一章图标 -->
-        <IconArrayRight/>
-      </span>
-    </div>
-  </div>
   <ComponentChapters
     v-if="bookChaptersVisible"
     :chapters="currentBookChapters"
@@ -219,5 +189,37 @@ onBeforeMount(() => {
     @setChapterIndex="setChapterIndex"
     @switchBookChaptersVisible="switchBookChaptersVisible"
   />
+  <div class="text-box" v-if="!bookChaptersVisible">
+    <div class="top-bar shadow">
+      <div class="buttons" v-if="controlVisible">
+        <span class="button" @click="bookChaptersVisible = true">
+          <!-- 目录图标 -->
+          <IconContent />
+        </span>
+        <span class="button" @click="changeBookCollectStatus()">
+          <!-- 收藏图标 -->
+          <IconStar
+            class="icon-smaill"
+            :class="isBookCollected ? 'icon-fill' : ''"
+          />
+        </span>
+      </div>
+    </div>
+
+    <ComponentChapterText
+      ref="text"
+      :chapter="currentBookChapterArray"
+      @switchControlVisible="switchControlVisible"
+    />
+
+    <ComponentPageCotroler
+      v-if="controlVisible"
+      @setPageIndex="addChapterIndex"
+      :leftArrayVisible="currentBookChapterIndex != 0"
+      :rightArrayVisible="
+        currentBookChapterIndex < currentBookChapters.length - 1
+      "
+    />
+  </div>
 </template>
 

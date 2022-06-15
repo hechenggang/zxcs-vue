@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { computed, ref, watch,watchEffect } from "vue";
+import { computed, ref, watch, watchEffect } from "vue";
 import { RouterLink } from "vue-router";
 
 import { getBooks, parseJson, getAllHistory } from "../tools/request";
 import type { Books } from "../tools/store";
 import { onMounted } from "vue";
-import { FullscreenLoading,getHistory,setHistory } from "../tools/store";
+import { FullscreenLoading, getHistory, setHistory } from "../tools/store";
 
+import ComponentPageCotroler from "../components/PageCotroler.vue";
 import BookList from "../components/BookList.vue";
 import IconClose from "../components/icon/close.vue";
 import IconCollect from "../components/icon/collect.vue";
@@ -14,7 +15,7 @@ import IconSearch from "../components/icon/search.vue";
 import IconArrayLeft from "../components/icon/array-left.vue";
 import IconArrayRight from "../components/icon/array-right.vue";
 
-document.title = "书架 - 简单全本"
+document.title = "书架 - 简单全本";
 const books = ref<Books>([]);
 const tempBooks = ref<Books>([]);
 const currentBooksOffset = ref(0);
@@ -40,12 +41,11 @@ function swichShowSearchBox() {
   booksSearchBoxVisible.value = !booksSearchBoxVisible.value;
 }
 
-function changeOffset(num: number) {
-  const next = currentBooksOffset.value + num;
-  if (next < 0) {
+const setPageIndex = (num:number)=>{
+  if (currentBooksOffset.value + num*10 < 0) {
     return;
   }
-  currentBooksOffset.value = next;
+  currentBooksOffset.value += num*10;
 }
 
 // for reuse booklist component, here try rebuild history data to match what booklist need
@@ -62,7 +62,6 @@ const getRetypedHistory = computed(() => {
   });
   return tempHistorys;
 });
-
 
 watchEffect(() => {
   FullscreenLoading.value = true;
@@ -87,7 +86,7 @@ watchEffect(() => {
       document.body.scrollTop = 0;
     });
   });
-})
+});
 
 const requestAllHistory = () => {
   FullscreenLoading.value = true;
@@ -103,36 +102,33 @@ const requestAllHistory = () => {
   });
 };
 
-
 onMounted(() => {
   requestAllHistory();
 });
-
 </script>
 
 <template>
   <div class="top-bar shadow">
-    <div class="buttons"  v-if="!bookHistoryVisible && !booksSearchBoxVisible">
-       <span class="button" @click="swichShowSearchBox()" >
-          <!-- 搜索图标 -->
-          <IconSearch/>
-        </span>
-        <span class="button"  @click="swichbookHistoryVisible()">
-          <!-- 收藏夹图标 -->
-          <IconCollect/>
-        </span>
+    <div class="buttons" v-if="!bookHistoryVisible && !booksSearchBoxVisible">
+      <span class="button" @click="swichShowSearchBox()">
+        <!-- 搜索图标 -->
+        <IconSearch />
+      </span>
+      <span class="button" @click="swichbookHistoryVisible()">
+        <!-- 收藏夹图标 -->
+        <IconCollect />
+      </span>
     </div>
 
     <div class="buttons" v-if="bookHistoryVisible">
       <span class="flex-center lighter">{{ books.length }} 本书</span>
       <span class="button" @click="swichbookHistoryVisible()">
         <!-- 关闭收藏夹图标 -->
-        <IconClose/>
+        <IconClose />
       </span>
     </div>
 
     <div class="buttons" v-if="booksSearchBoxVisible">
-
       <input
         class="search-input lighter"
         type="text"
@@ -142,30 +138,17 @@ onMounted(() => {
       />
       <span class="button" @click="swichShowSearchBox()">
         <!-- 关闭搜索图标 -->
-        <IconClose/>
+        <IconClose />
       </span>
     </div>
   </div>
 
-
   <BookList v-if="books.length > 0" :books="books" />
 
-  <div class="buttons shadow bar" v-if="!bookHistoryVisible">
-    <span
-      class="button"
-      v-if="currentBooksOffset > 0"
-      @click="changeOffset(-10)"
-    >
-      <IconArrayLeft/>
-    </span>
-    <span
-      class="false-button"
-      v-if="currentBooksOffset == 0"
-    ></span>
-    <span class="button"  @click="changeOffset(10)" >
-      <IconArrayRight/>
-    </span>
-  </div>
+  <ComponentPageCotroler
+    @setPageIndex="setPageIndex"
+    :leftArrayVisible="currentBooksOffset != 0"
+  />
 </template>
 
 <style>
@@ -175,6 +158,7 @@ onMounted(() => {
   margin-right: 0.25rem;
   padding: 0.25rem;
   color: var(--color-link);
+  padding-right: 0.75rem;
 }
 .no-padding {
   padding: 0;

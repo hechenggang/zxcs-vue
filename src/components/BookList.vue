@@ -52,7 +52,6 @@ const props = defineProps<{
 
   margin: 0;
   padding: 5rem 1rem;
-  padding-bottom: 1rem;
   transition: all 0.3s ease;
   overflow-x: hidden;
 }
