@@ -4,8 +4,9 @@
       <div class="loading">
         <p v-if="props.count < 0" class="note-text">{{ props.msg }}</p>
 
-        <svg xmlns="http://www.w3.org/2000/svg" v-if="props.count > 0" class="loading-icon"  viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+        <svg xmlns="http://www.w3.org/2000/svg" v-if="props.count > 0" class="loading-icon" viewBox="0 0 24 24"
+          stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <circle cx="12" cy="12" r="3" />
           <line x1="12" y1="5" x2="12" y2="3" />
           <line x1="17" y1="7" x2="18.4" y2="5.6" />
@@ -17,7 +18,7 @@
           <line x1="7" y1="7" x2="5.6" y2="5.6" />
         </svg>
 
-       
+
       </div>
     </div>
   </Transition>
@@ -45,14 +46,11 @@ const loadingVisible = ref(false)
 
 watch(() => props.count, () => {
   const time_cost = new Date().getTime() - loadingTimestamp
-  console.log('props.count: ', props.count, 'time cost: ', time_cost, ', timeout caller id: ', loadingTimeoutId)
-
   if (props.count < 0) {
     loadingVisible.value = true
     return
   }
   if (props.count == 0) {
-    console.log('close loading.')
     loadingVisible.value = false
     // count is 0, less than delay ,cancel show loading
     if (time_cost < props.delay && loadingTimeoutId > 0) {
@@ -64,11 +62,11 @@ watch(() => props.count, () => {
   }
   // if first call this func, set a timeout to show loading
   if (loadingTimeoutId == 0 && props.count > 0) {
-    console.log('start loading.')
-
     loadingTimeoutId = setTimeout(() => {
       // console.log('func performed, caller id: ', loadingTimeoutId)
-      loadingVisible.value = true
+      if (loadingTimeoutId > 0) {
+        loadingVisible.value = true
+      }
       loadingTimeoutId = 0
     }, props.delay);
     // console.log('set new call: id: ', loadingTimeoutId)
