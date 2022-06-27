@@ -1,13 +1,24 @@
 <template>
   <transition>
-    <div v-if="loadingVisible" class="loading fixed-full flex-center">
-      <p v-if="props.count < 0" class="note-text">{{ props.msg }}</p>
-      <svg xmlns="http://www.w3.org/2000/svg" v-if="props.count > 0" class="loading-icon" viewBox="0 0 24 24"
-        stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
-        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-        <circle cx="12" cy="12" r="4" />
-        <path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" />
-      </svg>
+    <div v-if="loadingVisible" class="fixed-full flex-center">
+      <div class="loading">
+        <p v-if="props.count < 0" class="note-text">{{ props.msg }}</p>
+
+        <svg xmlns="http://www.w3.org/2000/svg" v-if="props.count > 0" class="loading-icon"  viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <circle cx="12" cy="12" r="3" />
+          <line x1="12" y1="5" x2="12" y2="3" />
+          <line x1="17" y1="7" x2="18.4" y2="5.6" />
+          <line x1="19" y1="12" x2="21" y2="12" />
+          <line x1="17" y1="17" x2="18.4" y2="18.4" />
+          <line x1="12" y1="19" x2="12" y2="21" />
+          <line x1="7" y1="17" x2="5.6" y2="18.4" />
+          <line x1="6" y1="12" x2="4" y2="12" />
+          <line x1="7" y1="7" x2="5.6" y2="5.6" />
+        </svg>
+
+       
+      </div>
     </div>
   </Transition>
 </template>
@@ -52,7 +63,9 @@ watch(() => props.count, () => {
     return
   }
   // if first call this func, set a timeout to show loading
-  if (!loadingTimeoutId && props.count > 0) {
+  if (loadingTimeoutId == 0 && props.count > 0) {
+    console.log('start loading.')
+
     loadingTimeoutId = setTimeout(() => {
       // console.log('func performed, caller id: ', loadingTimeoutId)
       loadingVisible.value = true
@@ -74,6 +87,7 @@ watch(() => props.count, () => {
   width: 100%;
   height: 100%;
   z-index: 998;
+  background-color: transparent;
 }
 
 .flex-center {
@@ -85,8 +99,9 @@ watch(() => props.count, () => {
 }
 
 .loading {
-  background-color: #fffdf2;
-  opacity: 0.9;
+  padding: 1rem;
+  opacity: 1;
+  box-shadow: 0px 2px 10px rgb(0 0 0 / 10%);
 }
 
 .loading-icon {

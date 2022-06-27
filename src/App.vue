@@ -108,16 +108,16 @@ if (logoEl) {
 }
 
 .v-enter-active {
-  transition: all 0.25s ease;
+  transition: all 0.2s ease-in;
 }
 
 .v-leave-active {
-  transition: all 0.25s ease;
+  transition: all 0.2s ease-out;
 }
 
 .v-enter-from,
 .v-leave-to {
-  transform: translateX(5px);
+  transform: translateX(10px);
   opacity: 0;
 }
 </style>
