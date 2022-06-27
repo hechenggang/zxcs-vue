@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { defineProps } from "vue";
-import { Config } from "../tools/store";
-import type { Books } from "../tools/store";
+import { CONFIG } from "../shared";
+import type { Books } from "../types";
 
 const props = defineProps<{
   books: Books;
 }>();
+
 </script>
 
 
@@ -22,8 +23,8 @@ const props = defineProps<{
           >
             <img
               v-lazy="
-                Config.baseUri +
-                Config.api.cover +
+                CONFIG.baseUri +
+                CONFIG.api.cover +
                 b.book_id +
                 '.webp'
               "
@@ -32,7 +33,7 @@ const props = defineProps<{
           </RouterLink>
         
       </div>
-      <div class="bookinfo">
+      <div class="book-info">
         <RouterLink
           :to="{ name: 'reader', query: { id: b.book_id, name: b.book_name } }"
           class="book-name"
@@ -49,7 +50,6 @@ const props = defineProps<{
 
 <style >
 .books {
-
   margin: 0;
   padding: 5rem 1rem;
   transition: all 0.3s ease;
@@ -60,13 +60,10 @@ const props = defineProps<{
   display: flex;
   justify-content: left;
   padding: 0.75rem 0;
-  /* border-bottom: 0.2rem solid #ffffff; */
   border-bottom: 1px solid #ededed;
-
 }
 
-
-.bookinfo {
+.book-info {
   display: flex;
   flex-direction: column;
 }
@@ -85,6 +82,7 @@ const props = defineProps<{
   margin-top: 0.25rem;
   color: var(--color-sub-text);
 }
+
 .book-cover-img {
     display: inline-block;
   width: 7rem;

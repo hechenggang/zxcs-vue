@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch,onBeforeMount } from "vue";
 import {
   getBookChapters,
   getBookChapter,
@@ -7,11 +7,10 @@ import {
   saveOneHistory,
   removeOneHistory,
   getOneHistory,
-} from "../tools/request";
-import { onBeforeMount } from "vue";
+} from "../request";
 import { useRoute } from "vue-router";
-import type { Chapters } from "../tools/store";
-import { FullscreenLoading, getHistory, setHistory } from "../tools/store";
+import type { Chapters } from "../types";
+import { getHistory, setHistory } from "../shared";
 
 import ComponentChapters from "../components/Chapters.vue";
 import ComponentPageCotroler from "../components/PageCotroler.vue";
@@ -55,50 +54,41 @@ const currentBookChapterIndex = isBookCollected.value
   : ref(0);
 
 const requestBookChapters = () => {
-  FullscreenLoading.value = true;
-  getBookChapters(bookId.value).then((resp) => {
-    parseJson(resp, (jsonData: any) => {
+  getBookChapters((jsonData: any) => {
       if (!jsonData) {
         return;
       }
       console.log("getBookChapters", jsonData);
       currentBookChapters.value = jsonData.chapters;
-      FullscreenLoading.value = false;
-    });
-  });
+    },bookId.value)
 };
 
 // it is better to load chapter content by index change instead of direct pass a index
 const requestBookChapter = () => {
-  FullscreenLoading.value = true;
-  getBookChapter(bookId.value, currentBookChapterIndex.value).then((resp) => {
-    parseJson(resp, (jsonData: any) => {
+  getBookChapter((jsonData: any) => {
       if (!jsonData) {
         return;
       }
       console.log("getBookChapter", jsonData);
       currentBookChapterArray.value = jsonData.chapter;
-      FullscreenLoading.value = false;
       document.documentElement.scrollTop = 0;
       document.body.scrollTop = 0;
       // afterget a chapter,
       // update chapter status to history api when the book is collected
       if (getHistory().hasOwnProperty(bookId.value)) {
         saveOneHistory(
+          ()=>{},
           bookId.value,
           currentBookChapterIndex.value,
           bookName.value
         );
       }
-    });
-  });
+    },bookId.value, currentBookChapterIndex.value)
 };
 
 // read remote index
 const requestBookHistory = () => {
-  FullscreenLoading.value = true;
-  getOneHistory(bookId.value).then((resp) => {
-    parseJson(resp, (jsonData: any) => {
+  getOneHistory((jsonData: any) => {
       if (!jsonData) {
         return;
       }
@@ -113,8 +103,7 @@ const requestBookHistory = () => {
           setChapterIndex(tempIndex);
         }
       }
-    });
-  });
+    },bookId.value)
 };
 
 const collectBook = () => {
@@ -122,7 +111,7 @@ const collectBook = () => {
   history[bookId.value] = [currentBookChapterIndex.value, bookName.value];
   setHistory(history);
   getBookCollectStatusFromHistory();
-  saveOneHistory(bookId.value, currentBookChapterIndex.value, bookName.value);
+  saveOneHistory(()=>{},bookId.value, currentBookChapterIndex.value, bookName.value);
 };
 
 const discollectBook = () => {
@@ -130,7 +119,7 @@ const discollectBook = () => {
   delete history[bookId.value];
   setHistory(history);
   getBookCollectStatusFromHistory();
-  removeOneHistory(bookId.value);
+  removeOneHistory(()=>{},bookId.value);
 };
 
 const changeBookCollectStatus = () => {
@@ -190,7 +179,7 @@ onBeforeMount(() => {
     @switchBookChaptersVisible="switchBookChaptersVisible"
   />
   <div class="text-box" v-if="!bookChaptersVisible">
-    <div class="top-bar shadow">
+    <div class="bar top-bar shadow">
       <div class="buttons" v-if="controlVisible">
         <span class="button" @click="bookChaptersVisible = true">
           <!-- 目录图标 -->

@@ -20,7 +20,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="bottom-bar shadow">
+  <div class="bar bottom-bar shadow">
     <div class="buttons">
       <!-- page - -->
       <span

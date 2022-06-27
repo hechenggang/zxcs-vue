@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { computed, ref, watch, watchEffect } from "vue";
+import { computed, ref, watch, watchEffect, onMounted } from "vue";
 import { RouterLink } from "vue-router";
 
-import { getBooks, parseJson, getAllHistory } from "../tools/request";
-import type { Books } from "../tools/store";
-import { onMounted } from "vue";
-import { FullscreenLoading, getHistory, setHistory } from "../tools/store";
+import { getBooks, parseJson, getAllHistory } from "../request";
+import type { Books } from "../types";
+import { getHistory, setHistory } from "../shared";
 
 import ComponentPageCotroler from "../components/PageCotroler.vue";
 import BookList from "../components/BookList.vue";
@@ -24,16 +23,13 @@ const booksSearchBoxVisible = ref(false);
 const bookHistoryVisible = ref(false);
 
 function swichbookHistoryVisible() {
-  FullscreenLoading.value = true;
   booksSearchBoxVisible.value = false;
   bookHistoryVisible.value = !bookHistoryVisible.value;
   if (bookHistoryVisible.value) {
     tempBooks.value = books.value;
-    books.value = getRetypedHistory.value;
-    FullscreenLoading.value = false;
+    books.value = retypeHistory();
   } else {
     books.value = tempBooks.value;
-    FullscreenLoading.value = false;
   }
 }
 
@@ -41,15 +37,15 @@ function swichShowSearchBox() {
   booksSearchBoxVisible.value = !booksSearchBoxVisible.value;
 }
 
-const setPageIndex = (num:number)=>{
-  if (currentBooksOffset.value + num*10 < 0) {
+const setPageIndex = (num: number) => {
+  if (currentBooksOffset.value + num * 10 < 0) {
     return;
   }
-  currentBooksOffset.value += num*10;
+  currentBooksOffset.value += num * 10;
 }
 
 // for reuse booklist component, here try rebuild history data to match what booklist need
-const getRetypedHistory = computed(() => {
+const retypeHistory = () => {
   let tempHistorys = Array();
   const history = getHistory();
   Object.keys(history).forEach((book_id) => {
@@ -61,19 +57,11 @@ const getRetypedHistory = computed(() => {
     });
   });
   return tempHistorys;
-});
+};
 
-watchEffect(() => {
-  FullscreenLoading.value = true;
+const loadBooks = () => {
   getBooks(
-    Number(currentBooksOffset.value),
-    10,
-    currentBooksKeyword.value
-  ).then((resp) => {
-    parseJson(resp, (jsonData: any) => {
-      if (!jsonData) {
-        return;
-      }
+    (jsonData: any) => {
       console.log("getBooks success", jsonData);
       if (jsonData.result.length) {
         books.value = jsonData.result;
@@ -81,34 +69,33 @@ watchEffect(() => {
         alert("没有更多结果了");
         currentBooksKeyword.value = "";
       }
-      FullscreenLoading.value = false;
       document.documentElement.scrollTop = 0;
       document.body.scrollTop = 0;
-    });
-  });
-});
+    },
+    Number(currentBooksOffset.value),
+    10,
+    currentBooksKeyword.value
+  )
+}
 
-const requestAllHistory = () => {
-  FullscreenLoading.value = true;
-  getAllHistory().then((resp) => {
-    parseJson(resp, (jsonData: any) => {
-      if (!jsonData) {
-        return;
-      }
-      console.log("getAllHistory success ", jsonData);
-      setHistory(jsonData.history);
-      FullscreenLoading.value = false;
-    });
-  });
+const loadAllHistory = () => {
+  getAllHistory((jsonData: any) => {
+    console.log("getAllHistory success ", jsonData);
+    setHistory(jsonData.history);
+  })
 };
 
+watch([currentBooksKeyword,currentBooksOffset],loadBooks);
+
 onMounted(() => {
-  requestAllHistory();
+  loadBooks()
+  loadAllHistory();
 });
+
 </script>
 
 <template>
-  <div class="top-bar shadow">
+  <div class="bar top-bar shadow">
     <div class="buttons" v-if="!bookHistoryVisible && !booksSearchBoxVisible">
       <span class="button" @click="swichShowSearchBox()">
         <!-- 搜索图标 -->
@@ -129,13 +116,7 @@ onMounted(() => {
     </div>
 
     <div class="buttons" v-if="booksSearchBoxVisible">
-      <input
-        class="search-input lighter"
-        type="text"
-        placeholder="在这里输入书名或作者"
-        v-model="currentBooksKeyword"
-        v-focus
-      />
+      <input class="search-input lighter" type="text" placeholder="在这里输入书名或作者" v-model="currentBooksKeyword" v-focus />
       <span class="button" @click="swichShowSearchBox()">
         <!-- 关闭搜索图标 -->
         <IconClose />
@@ -145,10 +126,7 @@ onMounted(() => {
 
   <BookList v-if="books.length > 0" :books="books" />
 
-  <ComponentPageCotroler
-    @setPageIndex="setPageIndex"
-    :leftArrayVisible="currentBooksOffset != 0"
-  />
+  <ComponentPageCotroler @setPageIndex="setPageIndex" :leftArrayVisible="currentBooksOffset != 0" />
 </template>
 
 <style>
@@ -160,6 +138,7 @@ onMounted(() => {
   color: var(--color-link);
   padding-right: 0.75rem;
 }
+
 .no-padding {
   padding: 0;
 }

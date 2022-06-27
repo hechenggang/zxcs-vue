@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { Config, getApiCode, setApiCode } from "../tools/store";
+import { getApiCode, setApiCode } from "../shared";
+import { CONFIG } from "../shared";
 
 const router = useRouter();
 const route = useRoute();
@@ -16,7 +17,7 @@ function checkApiCode() {
   } else {
     // if not, redirect to account service
     if (!getApiCode()) {
-      location.assign(Config.loginUri);
+      location.assign(CONFIG.loginUri);
       return null
     }
   }

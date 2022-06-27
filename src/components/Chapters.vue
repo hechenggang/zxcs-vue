@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, defineEmits, computed, defineProps, onMounted, watch } from "vue";
-import type { Chapters } from "../tools/store";
+import type { Chapters } from "../types";
 import ComponentPageCotroler from "../components/PageCotroler.vue";
 
 import IconClose from "./icon/close.vue";
@@ -61,7 +61,7 @@ onMounted(() => {
 
 <template>
   <div class="chapters-container">
-    <div class="shadow top-bar">
+    <div class="bar top-bar shadow ">
       <div class="buttons">
         <span class="button" @click="emit('switchBookChaptersVisible')">
           <IconClose />
