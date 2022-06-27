@@ -34,24 +34,20 @@ const loadingVisible = ref(false)
 
 watch(() => props.count, () => {
   const time_cost = new Date().getTime() - loadingTimestamp
-  console.log('time cost: ', time_cost, ', timeout caller id: ', loadingTimeoutId)
+  console.log('props.count: ', props.count, 'time cost: ', time_cost, ', timeout caller id: ', loadingTimeoutId)
 
   if (props.count < 0) {
     loadingVisible.value = true
     return
   }
   if (props.count == 0) {
+    console.log('close loading.')
     loadingVisible.value = false
     // count is 0, less than delay ,cancel show loading
-    if (loadingTimeoutId) {
-      if (time_cost < props.delay) {
-        // console.log('do clear, id: ', loadingTimeoutId)
-        if (loadingTimeoutId > 0) {
-          clearTimeout(loadingTimeoutId)
-          loadingTimeoutId = 0
-        }
-      }
+    if (time_cost < props.delay && loadingTimeoutId > 0) {
+      clearTimeout(loadingTimeoutId)
     }
+    loadingTimeoutId = 0
     loadingTimestamp = new Date().getTime()
     return
   }

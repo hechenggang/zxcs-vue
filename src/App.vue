@@ -13,7 +13,7 @@ if (logoEl) {
 <template>
   <RouterView />
   <Transition>
-    <Loading :count="REQUESTING_COUNT" :delay="100" msg="Sorry. Try later please." />
+    <Loading :count="REQUESTING_COUNT" :delay="200" msg="Sorry. Try later please." />
   </Transition>
 </template>
 
