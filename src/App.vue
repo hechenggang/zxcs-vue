@@ -19,6 +19,7 @@ if (logoEl) {
 
 
 <style>
+
 .buttons {
   display: flex;
   width: 100%;
@@ -72,12 +73,16 @@ if (logoEl) {
   height: 100%;
 }
 
+.flex {
+  display: flex;
+}
+
+
 .flex-center {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: nowrap;
-  flex-direction: column;
 }
 
 .shadow {
