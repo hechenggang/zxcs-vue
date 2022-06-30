@@ -203,7 +203,7 @@ onBeforeMount(() => {
   <ComponentChapters v-if="bookChaptersVisible" :chapters="currentBookChapters" :index="currentBookChapterIndex"
     @setChapterIndex="setChapterIndex" @switchBookChaptersVisible="switchBookChaptersVisible" />
   
-  <ComponentTTSControl v-if="isReadingMode&&voices?.length" :voices="voices" :ok="isReadingMode" :chapter="currentBookChapterArray"/>
+  <ComponentTTSControl v-if="isReadingMode&&voices?.length"  @setPageIndex="addChapterIndex" :voices="voices" :chapter="currentBookChapterArray"/>
 
   <div class="text-box" v-if="!bookChaptersVisible">
     <div class="bar top-bar shadow">
