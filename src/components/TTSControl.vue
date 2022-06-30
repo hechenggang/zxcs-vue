@@ -21,45 +21,48 @@ const speech = window.speechSynthesis
 
 
 const read = () => {
-  if (status.value == 0 && readIndex.value < props.chapter.length) {
-    currentSentence.value = props.chapter[readIndex.value]
-    const sentence = new window.SpeechSynthesisUtterance(currentSentence.value)
-    sentence.rate = currentRate.value
-    sentence.voice = props.voices[currentVoiceIndex.value]
-    speech.speak(sentence)
-    sentence.onend = () => {
-      readIndex.value += 1
-      read()
-    };
-  }
-  else if (status.value == 0 && readIndex.value >= props.chapter.length) {
-    status.value = 1
-    console.log('load next')
+  if (ok.value) {
+    if (status.value == 0 && readIndex.value < props.chapter.length) {
+      currentSentence.value = props.chapter[readIndex.value]
+      const sentence = new window.SpeechSynthesisUtterance(currentSentence.value)
+      sentence.rate = currentRate.value
+      sentence.voice = props.voices[currentVoiceIndex.value]
+      speech.speak(sentence)
+      sentence.onend = () => {
+        readIndex.value += 1
+        read()
+      };
+    }
+    else if (status.value == 0 && readIndex.value >= props.chapter.length) {
+      status.value = 1
+      console.log('load next')
 
-    emit('setPageIndex', 1);
-    read()
-  } else {
-    // 稍后再读
-    console.log('wait:','status',status.value,'index',readIndex.value)
-    setTimeout(()=>read(),500)
+      emit('setPageIndex', 1);
+      read()
+    } else {
+      // 稍后再读
+      console.log('wait:', 'status', status.value, 'index', readIndex.value)
+      setTimeout(() => read(), 500)
+    }
   }
+
 }
 
 
 
 watch(() => props.chapter, () => {
   console.log('chapter change')
-  if (speech.speaking){
+  if (speech.speaking) {
     speech.cancel()
   }
   // status 1 是主动调用下一章
-  if (status.value == 1){
+  if (status.value == 1) {
     readIndex.value = 0
-  }else{
+  } else {
     readIndex.value = -1
   }
   status.value = 0
-  console.log('chapter change','index',readIndex.value,'status',status.value)
+  console.log('chapter change', 'index', readIndex.value, 'status', status.value)
 
 
 })
