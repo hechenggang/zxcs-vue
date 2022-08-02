@@ -2,6 +2,7 @@
   <transition>
     <div v-if="loadingVisible" class="fixed-full flex-center">
       <div class="loading">
+
         <p v-if="props.count < 0" class="note-text">{{ props.msg }}</p>
 
         <svg xmlns="http://www.w3.org/2000/svg" v-if="props.count > 0" class="loading-icon" viewBox="0 0 24 24"
@@ -97,7 +98,10 @@ watch(() => props.count, () => {
 }
 
 .loading {
-  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
   opacity: 1;
   box-shadow: 0px 2px 10px rgb(0 0 0 / 10%);
 }
@@ -106,7 +110,6 @@ watch(() => props.count, () => {
   width: 1.75rem;
   height: 1.75rem;
   stroke: #706b66;
-  fill: #706b66;
   animation: rotate 3s linear infinite;
   background-color: #fffdf2;
 }

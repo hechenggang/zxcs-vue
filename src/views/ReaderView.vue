@@ -197,6 +197,8 @@ onBeforeMount(() => {
   // try get tts voices
   getVoices();
 });
+
+
 </script>
 
 <template>

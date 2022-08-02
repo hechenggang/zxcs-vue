@@ -92,6 +92,9 @@ onMounted(() => {
   loadAllHistory();
 });
 
+window.onscroll = (e)=>{
+  console.log('scroll',e)
+}
 </script>
 
 <template>

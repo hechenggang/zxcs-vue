@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@vueuse/core": "^8.2.5",
+    "lxgw-wenkai-lite-webfont": "^1.6.0",
+    "lxgw-wenkai-screen-webfont": "^1.6.0",
     "vue": "^3.2.31",
     "vue-router": "^4.0.14",
     "vue-starport": "^0.2.10",
