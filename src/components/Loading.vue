@@ -87,6 +87,7 @@ watch(() => props.count, () => {
   height: 100%;
   z-index: 998;
   background-color: transparent;
+  
 }
 
 .flex-center {
@@ -104,6 +105,8 @@ watch(() => props.count, () => {
   padding: 1.5rem;
   opacity: 1;
   box-shadow: 0px 2px 10px rgb(0 0 0 / 10%);
+  background-color: var(--color-bg);
+
 }
 
 .loading-icon {

@@ -4,6 +4,10 @@ import IconArrayLeft from "../components/icon/array-left.vue";
 import IconArrayRight from "../components/icon/array-right.vue";
 
 const props = defineProps({
+  text: {
+    type: String,
+    default: '',
+  },
   leftArrayVisible: {
     type: Boolean,
     default: true,
@@ -20,7 +24,6 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="bar bottom-bar shadow">
     <div class="buttons">
       <!-- page - -->
       <span
@@ -35,6 +38,7 @@ const emit = defineEmits<{
         class="false-button"
         v-if="!rightArrayVisible || !leftArrayVisible"
       ></span>
+      <p class="text">{{ text }}</p>
       <!-- page + -->
       <span
         class="button"
@@ -44,5 +48,13 @@ const emit = defineEmits<{
         <IconArrayRight />
       </span>
     </div>
-  </div>
 </template>
+
+<style>
+.text {
+  font-size: 0.8rem;
+  line-height: 1rem;
+  font-weight: lighter;
+  color: var(--color-sub-text);
+}
+</style>

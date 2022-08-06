@@ -22,6 +22,8 @@ if (logoEl) {
 
 .buttons {
   display: flex;
+  align-items: center;
+
   width: 100%;
   justify-content: space-between;
   padding: 0 1rem;
@@ -42,7 +44,7 @@ if (logoEl) {
 
 .false-button {
   font-size: 1rem;
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem 1.5rem;
   color: var(--color-link);
   background-color: transparent;
 
@@ -52,7 +54,7 @@ if (logoEl) {
   position: fixed;
   width: calc(100% - 2rem);
   margin: 1rem;
-  background-color: transparent;
+  background-color: var(--color-bg);
 }
 
 .top-bar {

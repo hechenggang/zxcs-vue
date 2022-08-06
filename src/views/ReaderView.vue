@@ -234,7 +234,7 @@ onBeforeMount(() => {
 
     <ComponentChapterText v-if="!isReadingMode" ref="text" :chapter="currentBookChapterArray" @switchControlVisible="switchControlVisible" />
 
-    <ComponentPageCotroler v-if="controlVisible" @setPageIndex="addChapterIndex"
+    <ComponentPageCotroler class="bar bottom-bar shadow" v-if="controlVisible" @setPageIndex="addChapterIndex"
       :leftArrayVisible="currentBookChapterIndex != 0" :rightArrayVisible="
         currentBookChapterIndex < currentBookChapters.length - 1
       " />
