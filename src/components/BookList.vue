@@ -53,7 +53,9 @@ const props = defineProps<{
   justify-content: left;
   padding: 4rem 0;
 
-  background-color: #fff7e9;
+  /* background-color: #fff7e9; */
+  background-color: var(--color-bg2);
+  
   border-radius: 1rem;
 
   margin: 1rem 0;

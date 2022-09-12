@@ -126,7 +126,7 @@ onMounted(() => {
 
 <style>
 .main {
-  padding: 1rem;
+  padding: 1.25rem;
   padding-bottom: 5rem;
   background-color: var(--color-bg);
 }
@@ -137,8 +137,8 @@ onMounted(() => {
   width: 100%;
   padding: 0.75rem;
   color: var(--color-link);
-  background-color: transparent;
-  border: 1px solid #ededed;
+  background-color: var(--color-bg2);
+  /* border: 1px solid #ededed; */
   text-align: center;
   border-radius: 1rem;
 

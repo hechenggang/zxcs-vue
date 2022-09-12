@@ -100,10 +100,10 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   width: 100%;
+  padding: 5rem 1rem;
 }
 
 .chapters {
-  padding: 5rem 1rem;
   width: 100%;
   overflow: auto;
 }
