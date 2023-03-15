@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { REQUESTING_COUNT } from "./shared";
+import { currentRequestCount } from "./api";
 import Loading from "./components/Loading.vue";
 
 // 加载完成后删除 logo
@@ -7,18 +7,30 @@ const logoEl = document.querySelector("#logo");
 if (logoEl) {
   setTimeout(() => logoEl.remove(), 500);
 }
+
 </script>
 
 
 <template>
   <RouterView />
   <Transition>
-    <Loading :count="REQUESTING_COUNT" :delay="200" msg="Sorry. Try later please." />
+    <Loading :count="currentRequestCount" :delay="200" msg="稍后再试" />
   </Transition>
+  
 </template>
 
 
 <style>
+:root {
+  --color-bg: #fffdf2;
+  --color-bg2: #fff9ee;
+  --color-border: #ffeac3;
+  --color-link: #5698c3;
+  --color-text: #393733;
+  --color-sub-text: #706b66;
+}
+
+
 
 .buttons {
   display: flex;
@@ -28,6 +40,9 @@ if (logoEl) {
   justify-content: space-between;
   padding: 0 1rem;
   opacity: 0.95;
+
+  background-color: var(--color-bg2);
+  border: 1px solid var(--color-border);
 }
 
 .button {
@@ -36,8 +51,8 @@ if (logoEl) {
   padding: 0.75rem 1rem;
   color: var(--color-link);
   background-color: transparent;
+  cursor: pointer;
 }
-
 .button * {
   color: var(--color-link);
 }

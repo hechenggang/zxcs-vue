@@ -17,10 +17,7 @@ const CONFIG = {
 
 const getApiCode = ()=>localStorage.getItem("x-api-code")
 const setApiCode = (code:string)=>localStorage.setItem("x-api-code",code)
-const getHistory = ()=>JSON.parse(localStorage.getItem("history") as string) as History
-const setHistory = (history:History)=>localStorage.setItem("history",JSON.stringify(history))
 
 
-export { getApiCode,setApiCode,getHistory,setHistory  }
 
-export { REQUESTING_COUNT, CONFIG };
+export { REQUESTING_COUNT, CONFIG,getApiCode,setApiCode };

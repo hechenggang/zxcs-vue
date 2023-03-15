@@ -61,8 +61,7 @@ onMounted(() => {
 
 <template>
   <div class="chapters-container">
-    <div class="bar top-bar shadow ">
-      <div class="buttons">
+    <div class="buttons bar top-bar shadow ">
         <span class="button" @click="emit('switchBookChaptersVisible')">
           <IconClose />
         </span>
@@ -71,7 +70,6 @@ onMounted(() => {
             第 {{ page + 1 }} 页
           </option>
         </select>
-      </div>
     </div>
 
     <ul class="chapters">
@@ -100,12 +98,13 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 5rem 1rem;
+  padding: 3.5rem 1rem;
 }
 
 .chapters {
   width: 100%;
   overflow: auto;
+  margin: 1rem 0;
 }
 
 .chapter {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from "vue";
-import { CONFIG } from "../shared";
+import { apiUri } from "../api";
 import type { Books } from "../types";
 
 const props = defineProps<{
@@ -11,32 +11,32 @@ const props = defineProps<{
 
 
 <template>
-  <ul class="books">
-    <li class="book" v-for="b in books" :key="b.book_id">
+  <TransitionGroup name="list" tag="ul" class="books">
+    <li class="book" v-for="b in books" :key="b[0]">
       <div class="cover">
 
         <RouterLink :to="{
           name: 'reader',
-          query: { id: b.book_id, name: b.book_name },
+          query: { id: b[0], name: b[1] },
         }">
           <img v-lazy="
-            CONFIG.baseUri +
-            CONFIG.api.cover +
-            b.book_id +
+            apiUri.base +
+            apiUri.cover +
+            b[0] +
             '.webp'
           " class="shadow book-cover-img" />
         </RouterLink>
 
       </div>
       <div class="book-info">
-        <RouterLink :to="{ name: 'reader', query: { id: b.book_id, name: b.book_name } }" class="book-name">{{
-            b.book_name
+        <RouterLink :to="{ name: 'reader', query: { id: b[0], name: b[1] } }" class="book-name">{{
+          b[1]
         }}</RouterLink>
-        <p v-if="b.book_author" class="book-author">{{ b.book_author.replace(/^\s+|\s+$/g, "") }}</p>
-        <p v-if="b.book_brief" class="book-brief">{{ b.book_brief }}</p>
+        <p v-if="b.length > 2" class="book-author">{{ b[2].replace(/^\s+|\s+$/g, "") }}</p>
+        <p v-if="b.length > 3" class="book-brief">{{ b[3] }}</p>
       </div>
     </li>
-  </ul>
+  </TransitionGroup>
 </template>
 
 <style >
@@ -53,12 +53,11 @@ const props = defineProps<{
   justify-content: left;
   padding: 4rem 0;
 
-  /* background-color: #fff7e9; */
-  background-color: var(--color-bg2);
-  
   border-radius: 1rem;
-
   margin: 1rem 0;
+  background-color: var(--color-bg2);
+  border: 1px solid var(--color-border);
+
 }
 
 .book-info {
@@ -100,5 +99,15 @@ const props = defineProps<{
   border-radius: 5px;
 
 
+}
+
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.2s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0.7;
+  transform: translateX(5px);
 }
 </style>

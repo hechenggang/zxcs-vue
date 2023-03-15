@@ -64,6 +64,10 @@ function getBooks(callback:Function,offset: number = 0, limit: number = 10, keyw
   return Get(CONFIG.baseUri + CONFIG.api.books,parseJson,callback ,query)
 }
 
+function getRandomBooks(callback:Function,offset: number = 0, limit: number = 10) {
+  return Get(CONFIG.baseUri + CONFIG.api.books,parseJson,callback ,{ action: 'random', limit, offset })
+}
+
 function getBookChapters(callback:Function,id: string) {
   return Get(CONFIG.baseUri + CONFIG.api.chapters, parseJson, callback , { id })
 }
@@ -100,4 +104,4 @@ function removeOneHistory(callback:Function,id: string) {
   })
 }
 
-export { getBooks, getBookChapters, getBookChapter, parseJson, getAllHistory, getOneHistory, saveOneHistory, removeOneHistory }
+export { getBooks, getBookChapters, getBookChapter, parseJson, getAllHistory, getOneHistory, saveOneHistory, removeOneHistory, getRandomBooks }

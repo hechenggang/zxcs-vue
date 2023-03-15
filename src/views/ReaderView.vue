@@ -3,14 +3,14 @@ import { computed, ref, watch, onBeforeMount } from "vue";
 import {
   getBookChapters,
   getBookChapter,
-  parseJson,
   saveOneHistory,
   removeOneHistory,
   getOneHistory,
-} from "../request";
+} from "../api";
+
 import { useRoute } from "vue-router";
 import type { Chapters } from "../types";
-import { getHistory, setHistory } from "../shared";
+// import { getHistory, setHistory } from "../shared";
 
 import ComponentChapters from "../components/Chapters.vue";
 import ComponentPageCotroler from "../components/PageCotroler.vue";
@@ -38,6 +38,7 @@ const bookId = ref<string>(route.query.id as string);
 const bookName = ref<string>(route.query.name as string);
 const currentBookChapters = ref<Chapters>([]);
 const currentBookChapterArray = ref<Array<string>>([]);
+const currentBookChapterIndex = ref();
 const bookChaptersVisible = ref(false);
 const controlVisible = ref(false);
 const isBookCollected = ref(false);
@@ -45,85 +46,68 @@ const isReadingMode = ref(false);
 
 document.title = bookName.value + " - 简单全本";
 
-// load book status from local history
-const getBookCollectStatusFromHistory = () => {
-  isBookCollected.value = getHistory().hasOwnProperty(bookId.value);
-};
-getBookCollectStatusFromHistory();
 
-// first try to find index at localstorage, as collected book
-// if not, set index to 0, as new book
-const currentBookChapterIndex = isBookCollected.value
-  ? ref(getHistory()[bookId.value][0])
-  : ref(0);
+
 
 const requestBookChapters = () => {
-  getBookChapters((jsonData: any) => {
-    if (!jsonData) {
-      return;
-    }
-    console.log("getBookChapters", jsonData);
-    currentBookChapters.value = jsonData.chapters;
-  }, bookId.value)
+  console.log('getBookChapters')
+  getBookChapters(bookId.value).then((resp) => {
+    currentBookChapters.value = resp.data.chapters
+  })
 };
 
-// it is better to load chapter content by index change instead of direct pass a index
+
+
 const requestBookChapter = () => {
-  getBookChapter((jsonData: any) => {
-    if (!jsonData) {
-      return;
-    }
-    console.log("getBookChapter", jsonData);
-    currentBookChapterArray.value = jsonData.chapter;
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-    // afterget a chapter,
+  console.log("getBookChapter");
+  getBookChapter(bookId.value, currentBookChapterIndex.value).then((resp) => {
+    currentBookChapterArray.value = resp.data.chapter
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
+    // after get a chapter,
     // update chapter status to history api when the book is collected
-    if (getHistory().hasOwnProperty(bookId.value)) {
+    if (isBookCollected.value) {
       saveOneHistory(
-        () => { },
         bookId.value,
         currentBookChapterIndex.value,
         bookName.value
       );
     }
-  }, bookId.value, currentBookChapterIndex.value)
+
+  })
+
+
 };
+
+function setChapterIndex(index: number) {
+  currentBookChapterIndex.value = index;
+  bookChaptersVisible.value = false;
+  controlVisible.value = false;
+}
 
 // read remote index
 const requestBookHistory = () => {
-  getOneHistory((jsonData: any) => {
-    if (!jsonData) {
-      return;
+  console.log("getOneHistory");
+  getOneHistory(bookId.value).then((resp) => {
+    //   [book_id,book_name,index,time]]
+    if (resp.data[0] == 200) {
+      setChapterIndex(resp.data[1][2]);
+      isBookCollected.value = true
+    } else {
+      setChapterIndex(0)
+
     }
-    console.log("getOneHistory", jsonData);
-    //   [200,["4","bookName"]]
-    let tempIndex = jsonData[1][0];
-    if (tempIndex != currentBookChapterIndex.value) {
-      let ok = confirm(
-        `要使用云端进度吗？\n云端进度：${tempIndex}\n本地进度：${currentBookChapterIndex.value} `
-      );
-      if (ok) {
-        setChapterIndex(tempIndex);
-      }
-    }
-  }, bookId.value)
+  })
 };
 
 const collectBook = () => {
-  const history = getHistory();
-  history[bookId.value] = [currentBookChapterIndex.value, bookName.value];
-  setHistory(history);
-  getBookCollectStatusFromHistory();
-  saveOneHistory(() => { }, bookId.value, currentBookChapterIndex.value, bookName.value);
+  isBookCollected.value = true
+  saveOneHistory(bookId.value, currentBookChapterIndex.value, bookName.value);
 };
 
 const discollectBook = () => {
-  const history = getHistory();
-  delete history[bookId.value];
-  setHistory(history);
-  getBookCollectStatusFromHistory();
-  removeOneHistory(() => { }, bookId.value);
+  isBookCollected.value = false
+  removeOneHistory(bookId.value);
 };
 
 const changeBookCollectStatus = () => {
@@ -134,13 +118,7 @@ const changeBookCollectStatus = () => {
   }
 };
 
-function setChapterIndex(index: number) {
-  currentBookChapterIndex.value = index;
-  bookChaptersVisible.value = false;
-  if (!isReadingMode.value){
-    controlVisible.value = false;
-  }
-}
+
 
 function addChapterIndex(num: number) {
   const next = Number(currentBookChapterIndex.value) + Number(num);
@@ -162,77 +140,38 @@ function switchControlVisible() {
 }
 
 
-const changeReadingMode = () => isReadingMode.value = !isReadingMode.value;
-
-
-const voices = ref<SpeechSynthesisVoice[]>()
-
-const getVoices = () =>  {
-  let count = 0;
-  const tid = setInterval(() => {
-    voices.value = window.speechSynthesis.getVoices();
-    console.log('the '+count+' time try to get tts voices.')
-    if (voices.value.length !== 0 || count > 10) {
-      clearInterval(tid);
-      console.log('get tts voices finished, result:',voices.value)
-    }else{
-      count += 1
-    }
-  }, 100);
-}
-
-
-// watch chapter index, load new chapter content when index changed
-watch(currentBookChapterIndex, () => {
-  requestBookChapter();
-});
-
 // request data before page mounted
 onBeforeMount(() => {
   requestBookChapters();
-  requestBookChapter();
-  if (getHistory().hasOwnProperty(bookId.value)) {
-    requestBookHistory();
-  }
-  // try get tts voices
-  getVoices();
+  requestBookHistory();
 });
 
+watch(currentBookChapterIndex, () => {
+  requestBookChapter()
+})
 
 </script>
 
 <template>
   <ComponentChapters v-if="bookChaptersVisible" :chapters="currentBookChapters" :index="currentBookChapterIndex"
     @setChapterIndex="setChapterIndex" @switchBookChaptersVisible="switchBookChaptersVisible" />
-  
-  <ComponentTTSControl v-if="isReadingMode&&voices?.length"  @setPageIndex="addChapterIndex" :voices="voices" :chapter="currentBookChapterArray"/>
+
 
   <div class="text-box" v-if="!bookChaptersVisible">
-    <div class="bar top-bar shadow">
-      <div class="buttons" v-if="controlVisible">
-        <span class="button" @click="bookChaptersVisible = true">
-          <!-- 目录图标 -->
-          <IconContent />
+    <div class="bar top-bar shadow buttons" v-if="controlVisible">
+      <span class="button" @click="bookChaptersVisible = true">
+        <!-- 目录图标 -->
+        <IconContent />
+      </span>
+      <div class="flex">
+        <span class="button" @click="changeBookCollectStatus()">
+          <!-- 收藏图标 -->
+          <IconStar class="icon-smaill" :class="isBookCollected ? 'icon-fill' : ''" />
         </span>
-
-        <div class="flex">
-          <span v-if="voices?.length" class="button" @click="changeReadingMode()">
-            <!-- 朗读模式图标 -->
-            <IconHeadphones class="icon-smaill" v-if="!isReadingMode" />
-            <IconHeadphonesOff class="icon-smaill" v-if="isReadingMode" />
-          </span>
-
-          <span class="button" @click="changeBookCollectStatus()">
-            <!-- 收藏图标 -->
-            <IconStar class="icon-smaill" :class="isBookCollected ? 'icon-fill' : ''" />
-          </span>
-
-        </div>
-
       </div>
     </div>
 
-    <ComponentChapterText v-if="!isReadingMode" ref="text" :chapter="currentBookChapterArray" @switchControlVisible="switchControlVisible" />
+    <ComponentChapterText ref="text" :chapter="currentBookChapterArray" @switchControlVisible="switchControlVisible" />
 
     <ComponentPageCotroler class="bar bottom-bar shadow" v-if="controlVisible" @setPageIndex="addChapterIndex"
       :leftArrayVisible="currentBookChapterIndex != 0" :rightArrayVisible="

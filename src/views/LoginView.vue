@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { getApiCode, setApiCode } from "../shared";
-import { CONFIG } from "../shared";
+import { apiUri, getApiCode, setApiCode } from "../api";
 
-const router = useRouter();
 const route = useRoute();
+const router = useRouter();
 
 function checkApiCode() {
   // check api-code
+  console.log("checkApiCode start");
+
   const inputApiCode: string = route.query.code as string;
   if (inputApiCode) {
     // if x-api-code in route query args, cache it, and use by useLocalStorage
@@ -17,7 +18,7 @@ function checkApiCode() {
   } else {
     // if not, redirect to account service
     if (!getApiCode()) {
-      location.assign(CONFIG.loginUri);
+      location.assign(apiUri.login);
       return null
     }
   }

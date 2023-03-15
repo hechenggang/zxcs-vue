@@ -50,7 +50,8 @@ const emit = defineEmits<{
     </div>
 </template>
 
-<style>
+<style scoped>
+
 .text {
   font-size: 0.8rem;
   line-height: 1rem;
