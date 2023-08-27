@@ -42,7 +42,8 @@ http.interceptors.response.use((res) => {
 }, (err) => {
   currentRequestCount.value -= 1
   if (err.response.data.errmsg) {
-    alert(err.response.data.errmsg);
+    alert(err.response.data.errmsg)
+    window.location.assign('/')
   }
   return Promise.reject(err)
 })
