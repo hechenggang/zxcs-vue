@@ -2,13 +2,13 @@ import { ref } from 'vue'
 import axios, { type AxiosPromise } from 'axios'
 
 const apiUri = {
-  "base": "https://zxcs.imhcg.cn/api",
+  "base": "https://api.zxcs.imhcg.cn/api",
   "login": "https://account.imhcg.cn/to/8bb1dab52c404b50154e5880e28c2db8",
 
   "books": "/books",
-  "cover": "/static/cover@webp/",
-  "chapter": "/chapter",
-  "chapters": "/chapters",
+  "cover": "/cover/",
+  "chapter": "/book/text",
+  "chapters": "/book/index",
   "history": "/history"
 
 };
@@ -40,6 +40,7 @@ http.interceptors.response.use((res) => {
   currentRequestCount.value -= 1
   return res
 }, (err) => {
+  currentRequestCount.value -= 1
   if (err.response.data.errmsg) {
     alert(err.response.data.errmsg);
   }
@@ -64,8 +65,8 @@ const getBookChapters = (id: string): AxiosPromise => {
   return http.get(apiUri.chapters, { params: { id } })
 }
 
-const getBookChapter = (id: string, index: number): AxiosPromise => {
-  return http.get(apiUri.chapter, { params: { id, index } })
+const getBookChapter = (id: string, start: number, end: number): AxiosPromise => {
+  return http.get(apiUri.chapter, { params: { id, start, end } })
 }
 
 const getAllHistory = (): AxiosPromise => {

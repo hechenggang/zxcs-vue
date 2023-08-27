@@ -72,16 +72,16 @@ onMounted(() => {
         </select>
     </div>
 
-    <ul class="chapters">
+    <ul class="chapters" v-auto-animate>
       <li
-        v-for="chapter in chapterSliceArrayList"
+        v-for="(chapter,index) in chapterSliceArrayList"
         :class="
-          props.index === chapter[0] ? 'chapter active-chapter' : 'chapter'
+          props.index === index + chapterSliceStart ? 'chapter active-chapter' : 'chapter'
         "
-        @click="emit('setChapterIndex', chapter[0])"
+        @click="emit('setChapterIndex', index+chapterSliceStart)"
         :key="chapter[0]"
       >
-        {{ chapter[1] }}
+        {{ chapter[0] }}
       </li>
     </ul>
 

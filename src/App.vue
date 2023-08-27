@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 import { currentRequestCount } from "./api";
 import Loading from "./components/Loading.vue";
 
@@ -14,7 +15,7 @@ if (logoEl) {
 <template>
   <RouterView />
   <Transition>
-    <Loading :count="currentRequestCount" :delay="200" msg="稍后再试" />
+    <Loading :count="currentRequestCount" :delay="500" msg="稍后再试" v-auto-animate/>
   </Transition>
   
 </template>
@@ -70,6 +71,7 @@ if (logoEl) {
   width: calc(100% - 2rem);
   margin: 1rem;
   background-color: var(--color-bg);
+  z-index: 3;
 }
 
 .top-bar {

@@ -52,7 +52,8 @@ document.title = bookName.value + " - 简单全本";
 const requestBookChapters = () => {
   console.log('getBookChapters')
   getBookChapters(bookId.value).then((resp) => {
-    currentBookChapters.value = resp.data.chapters
+    currentBookChapters.value = resp.data
+    requestBookHistory()
   })
 };
 
@@ -60,8 +61,12 @@ const requestBookChapters = () => {
 
 const requestBookChapter = () => {
   console.log("getBookChapter");
-  getBookChapter(bookId.value, currentBookChapterIndex.value).then((resp) => {
-    currentBookChapterArray.value = resp.data.chapter
+  getBookChapter(
+    bookId.value, 
+    currentBookChapters.value[currentBookChapterIndex.value][1],
+    currentBookChapters.value[currentBookChapterIndex.value][2],
+    ).then((resp) => {
+    currentBookChapterArray.value = resp.data
     document.documentElement.scrollTop = 0
     document.body.scrollTop = 0
     // after get a chapter,
@@ -83,6 +88,7 @@ function setChapterIndex(index: number) {
   currentBookChapterIndex.value = index;
   bookChaptersVisible.value = false;
   controlVisible.value = false;
+  requestBookChapter()
 }
 
 // read remote index
@@ -143,40 +149,43 @@ function switchControlVisible() {
 // request data before page mounted
 onBeforeMount(() => {
   requestBookChapters();
-  requestBookHistory();
+  
 });
 
-watch(currentBookChapterIndex, () => {
-  requestBookChapter()
-})
+// watch(currentBookChapterIndex, () => {
+//   requestBookChapter()
+// })
 
 </script>
 
 <template>
-  <ComponentChapters v-if="bookChaptersVisible" :chapters="currentBookChapters" :index="currentBookChapterIndex"
-    @setChapterIndex="setChapterIndex" @switchBookChaptersVisible="switchBookChaptersVisible" />
+  <div class="reader" v-auto-animate>
 
-
-  <div class="text-box" v-if="!bookChaptersVisible">
-    <div class="bar top-bar shadow buttons" v-if="controlVisible">
-      <span class="button" @click="bookChaptersVisible = true">
-        <!-- 目录图标 -->
-        <IconContent />
-      </span>
-      <div class="flex">
-        <span class="button" @click="changeBookCollectStatus()">
-          <!-- 收藏图标 -->
-          <IconStar class="icon-smaill" :class="isBookCollected ? 'icon-fill' : ''" />
+    <ComponentChapters v-if="bookChaptersVisible" :chapters="currentBookChapters" :index="currentBookChapterIndex"
+      @setChapterIndex="setChapterIndex" @switchBookChaptersVisible="switchBookChaptersVisible" />
+  
+  
+    <div class="text-box" v-if="!bookChaptersVisible">
+      <div class="bar top-bar shadow buttons" v-if="controlVisible">
+        <span class="button" @click="bookChaptersVisible = true">
+          <!-- 目录图标 -->
+          <IconContent />
         </span>
+        <div class="flex">
+          <span class="button" @click="changeBookCollectStatus()">
+            <!-- 收藏图标 -->
+            <IconStar class="icon-smaill" :class="isBookCollected ? 'icon-fill' : ''" />
+          </span>
+        </div>
       </div>
+  
+      <ComponentChapterText ref="text" :chapter="currentBookChapterArray" @switchControlVisible="switchControlVisible" v-auto-animate/>
+  
+      <ComponentPageCotroler class="bar bottom-bar shadow" v-if="controlVisible" @setPageIndex="addChapterIndex"
+        :leftArrayVisible="currentBookChapterIndex != 0" :rightArrayVisible="
+          currentBookChapterIndex < currentBookChapters.length - 1
+        " />
     </div>
-
-    <ComponentChapterText ref="text" :chapter="currentBookChapterArray" @switchControlVisible="switchControlVisible" />
-
-    <ComponentPageCotroler class="bar bottom-bar shadow" v-if="controlVisible" @setPageIndex="addChapterIndex"
-      :leftArrayVisible="currentBookChapterIndex != 0" :rightArrayVisible="
-        currentBookChapterIndex < currentBookChapters.length - 1
-      " />
   </div>
 </template>
 

@@ -11,14 +11,15 @@ const props = defineProps<{
 
 
 <template>
-  <TransitionGroup name="list" tag="ul" class="books">
+  <!-- <TransitionGroup name="list" tag="ul" class="books"> -->
+  <ul name="list" tag="ul" class="books">
     <li class="book" v-for="b in books" :key="b[0]">
       <div class="cover">
 
         <RouterLink :to="{
           name: 'reader',
           query: { id: b[0], name: b[1] },
-        }">
+        }" v-auto-animate>
           <img v-lazy="
             apiUri.base +
             apiUri.cover +
@@ -36,7 +37,9 @@ const props = defineProps<{
         <p v-if="b.length > 3" class="book-brief">{{ b[3] }}</p>
       </div>
     </li>
-  </TransitionGroup>
+  </ul>
+
+  <!-- </TransitionGroup> -->
 </template>
 
 <style >

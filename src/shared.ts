@@ -4,13 +4,13 @@ import type { History } from './types'
 const REQUESTING_COUNT = ref(0);
 
 const CONFIG = {
-  "baseUri": "https://zxcs.imhcg.cn/api",
+  "baseUri": "https://api.zxcs.imhcg.cn/api",
   "loginUri": "https://account.imhcg.cn/to/8bb1dab52c404b50154e5880e28c2db8",
   "api": {
       "books":"/books",
-      "cover":"/static/cover@webp/",
-      "chapter":"/chapter",
-      "chapters":"/chapters",
+      "cover":"/cover/",
+      "chapter":"/book/text",
+      "chapters":"/book/index",
       "history":"/history"
   }
 };

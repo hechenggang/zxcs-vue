@@ -32,7 +32,7 @@ const setPageIndex = (num: number) => {
 watchEffect(() => {
   console.log("getAllBooks start", 'currentBooksOffset:', currentBooksOffset.value, 'currentBooksLimit', currentBooksLimit.value);
   getAllBooks(currentBooksOffset.value, currentBooksLimit.value).then((resp) => {
-    books.value = resp.data.result
+    books.value = resp.data
   })
 })
 
@@ -40,7 +40,7 @@ watch(currentBooksKeyword, () => {
   if (currentBooksKeyword.value != '') {
     console.log("findBooks start");
     findBooks(currentBooksKeyword.value).then((resp) => {
-      books.value = resp.data.result
+      books.value = resp.data
     })
   }
 })
@@ -48,7 +48,7 @@ watch(currentBooksKeyword, () => {
 const loadRandomBooks = () => {
   console.log("loadRandomBooks start");
   getRandomBooks().then((resp) => {
-    books.value = resp.data.result
+    books.value = resp.data
   })
 }
 </script>
@@ -60,7 +60,7 @@ const loadRandomBooks = () => {
 
       <input class="search-input" type="text" placeholder="搜索作者或书名" v-model="currentBooksKeyword" />
     </div>
-    <BookList v-if="books && books.length > 0" :books="books" />
+    <BookList v-if="books && books.length > 0" :books="books" v-auto-animate/>
 
 
     <ComponentPageCotroler v-if="books && books.length == currentBooksLimit" @setPageIndex="setPageIndex"
