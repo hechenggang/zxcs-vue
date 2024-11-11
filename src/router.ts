@@ -34,7 +34,11 @@ const router = createRouter({
       name: 'reader',
       component: ReaderView
     },
-
+    // 通配符路由，捕获所有未匹配的路由并重定向到 '/'
+    {
+      path: '/*',
+      redirect: '/',
+    },
   ]
 })
 

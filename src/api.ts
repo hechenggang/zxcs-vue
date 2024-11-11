@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import axios, { type AxiosPromise } from 'axios'
 
 const apiUri = {
-  "base": "https://api.zxcs.imhcg.cn/api",
+  "base": "https://api-zxcs.imhcg.cn/api",
   "login": "https://account.imhcg.cn/to/8bb1dab52c404b50154e5880e28c2db8",
 
   "books": "/books",
@@ -50,7 +50,6 @@ http.interceptors.response.use((res) => {
 
 
 const getAllBooks = (offset: number = 0, limit: number = 10,): AxiosPromise => {
-
   return http.get(apiUri.books, { params: { limit, offset } })
 }
 

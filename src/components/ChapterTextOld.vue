@@ -1,29 +1,36 @@
 <script setup lang="ts">
-import { defineEmits, defineProps } from "vue";
+import { ref, defineEmits, computed, defineProps } from "vue";
+import type { Ref } from "vue";
 
-// 定义组件的props
 const props = defineProps<{
   chapter: Array<string>;
 }>();
 
-// 定义组件的emits
 const emit = defineEmits<{
   (e: "switchControlVisible"): void;
 }>();
+
+const renderHtmlText = (chapterArray: Array<string>) => {
+  let chapterHtml = "";
+  for (let i = 0; i < chapterArray.length; i++) {
+    chapterHtml += "<p>" + chapterArray[i].replace(/^\s+|\s+$/g, "") + "</p>";
+  }
+  return chapterHtml;
+};
+
+// const chapterArray = ref(props.chapter)
+const chapterHtml = computed(() => renderHtmlText(props.chapter));
 </script>
 
 <template>
   <div
     class="chapter-text"
+    v-html="chapterHtml"
     @click="emit('switchControlVisible')"
-  >
-    <p v-for="(paragraph, index) in chapter" :key="index">
-      {{ paragraph.trim() }}
-    </p>
-  </div>
+  ></div>
 </template>
 
-<style scoped>
+<style >
 .chapter-text {
   padding: 5rem 1rem;
   overflow: auto;

@@ -27,6 +27,7 @@ if (logoEl) {
   --color-bg2: #fff9ee;
   --color-border: #ffeac3;
   --color-link: #5698c3;
+  --color-success: #56c375;
   --color-text: #393733;
   --color-sub-text: #706b66;
 }
