@@ -91,9 +91,9 @@ const loadRandomBooks = () => {
   justify-content: center;
   width: 100%;
   color: var(--color-link);
-  background: transparent;
-  border-bottom: 1px solid var(--color-border);
+  border: 1px solid var(--color-border);
   text-align: center;
+  background-color: var(--color-bg2);
 
   padding: 0 0.5rem;
 

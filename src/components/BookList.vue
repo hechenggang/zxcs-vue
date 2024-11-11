@@ -55,8 +55,6 @@ const props = defineProps<{
   align-items: center;
   justify-content: left;
   padding: 4rem 0;
-
-  border-radius: 1rem;
   margin: 1rem 0;
   background-color: var(--color-bg2);
   border: 1px solid var(--color-border);

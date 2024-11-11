@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, onBeforeMount, provide } from "vue";
+import { computed, ref, watch, onBeforeMount } from "vue";
 import {
   getBookChapters,
   getBookChapter,
@@ -34,16 +34,18 @@ const currentBookChapterIndex = ref<number>(null);
 const bookChaptersVisible = ref(false);
 const controlVisible = ref(false);
 const isBookCollected = ref(false);
-const isCaching = ref(false);
-const remainingChapters = ref(0);
 
 document.title = `${bookName.value} - 简单全本`;
+
+
 
 const setChapterIndex = (index: number) => {
   currentBookChapterIndex.value = index;
   bookChaptersVisible.value = false;
   controlVisible.value = false;
 };
+
+
 
 const requestBookHistory = async () => {
   console.log("getOneHistory");
@@ -65,29 +67,38 @@ const requestBookChapters = async () => {
 
 const getTextCache = (bookId, textStartIndex, textEndIndex) => {
   const textCache = sessionStorage.getItem(`${bookId}-${textStartIndex}-${textEndIndex}`)
-  return textCache ? JSON.parse(textCache) : null;
+  if (textCache) {
+    return JSON.parse(textCache)
+  } else {
+    return null
+  } 
 };
 
+
 const setTextCache = (bookId, textStartIndex, textEndIndex, textArray) => {
-  sessionStorage.setItem(`${bookId}-${textStartIndex}-${textEndIndex}`, JSON.stringify(textArray));
-};
+  sessionStorage.setItem(`${bookId}-${textStartIndex}-${textEndIndex}`,JSON.stringify(textArray))
+}
 
 const requestBookChapter = async () => {
   const [ chapterName, textStartIndex, textEndIndex] = currentBookChapters.value[currentBookChapterIndex.value];
-  let cache = getTextCache(bookId.value, textStartIndex, textEndIndex);
+  let cache = getTextCache(bookId.value, textStartIndex, textEndIndex)
   if (!cache) {
     console.log("getBookChapter");
     const resp = await getBookChapter(bookId.value, textStartIndex, textEndIndex);
-    if (!resp) return;
-    setTextCache(bookId.value, textStartIndex, textEndIndex, resp.data);
-    cache = resp.data;
-  }
+    if (!resp){
+      return
+    }
+    setTextCache(bookId.value, textStartIndex, textEndIndex, resp.data)
+    cache = resp.data
+  } 
   currentBookChapterArray.value = cache;
   window.scrollTo(0, 0);
   if (isBookCollected.value) {
     saveOneHistory(bookId.value, currentBookChapterIndex.value, bookName.value);
   }
 };
+
+
 
 const collectBook = () => {
   isBookCollected.value = true;
@@ -119,24 +130,22 @@ const switchControlVisible = () => {
 };
 
 const startCache = async () => {
-  isCaching.value = true;
-  const cacheSize = 20;
+  const cacheSize = 10;
   const startIndex = currentBookChapterIndex.value;
   const endIndex = Math.min(startIndex + cacheSize, currentBookChapters.value.length);
-  remainingChapters.value = endIndex - startIndex;
 
   for (let i = startIndex; i < endIndex; i++) {
     const [ chapterName, textStartIndex, textEndIndex] = currentBookChapters.value[i];
-    let cache = getTextCache(bookId.value, textStartIndex, textEndIndex);
+    let cache = getTextCache(bookId.value, textStartIndex, textEndIndex)
     if (!cache) {
       const resp = await getBookChapter(bookId.value, textStartIndex, textEndIndex);
-      if (!resp) return;
-      setTextCache(bookId.value, textStartIndex, textEndIndex, resp.data);
+      if (!resp){
+        return
+      }
+      setTextCache(bookId.value, textStartIndex, textEndIndex, resp.data)
     }
-    remainingChapters.value--;
   }
 
-  isCaching.value = false;
   console.log(`Cached chapters from ${startIndex} to ${endIndex - 1}`);
 };
 
@@ -145,12 +154,6 @@ onBeforeMount(() => {
 });
 
 watch(currentBookChapterIndex, requestBookChapter);
-
-provide('startCache', startCache);
-provide('isCaching', isCaching);
-provide('remainingChapters', remainingChapters);
-
-
 </script>
 
 <template>
