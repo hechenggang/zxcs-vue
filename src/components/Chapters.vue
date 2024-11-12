@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { ref, defineEmits, computed, defineProps, onMounted, watch, inject } from "vue";
-import type { Chapters } from "../types";
+import type { Ref } from "vue";
+
+import type { typeChapter,typeChapters } from "../types";
 import ComponentPageCotroler from "../components/PageCotroler.vue";
 import IconClose from "./icon/close.vue";
 import IconDownload from "./icon/download.vue";
-
+import ComponentSpinner from "../components/Spinner.vue";
 
 // 定义组件的props
 const props = defineProps<{
-  chapters: Chapters;
+  chapters: typeChapters;
   index: number;  
   bid: string;
 }>();
@@ -47,7 +49,7 @@ const changePageIndex = (num: number) => (chapterCurrentNavPage.value += num);
 chapterCurrentNavPage.value = Math.floor(props.index / chapterSliceStep.value);
 
 // 获取页面缓存状态
-const getTextCacheStatus = (chapter) => {
+const getTextCacheStatus = (chapter:typeChapter) => {
   const [name, textStartIndex, textEndIndex] = chapter;
   const textCache = sessionStorage.getItem(`${props.bid}-${textStartIndex}-${textEndIndex}`);
   return textCache ? true : false;
@@ -77,6 +79,7 @@ const triggerCache = () => {
     startCache();
   }
 };
+
 </script>
 
 <template>
@@ -91,10 +94,11 @@ const triggerCache = () => {
         </span>
 
         <span class="button" v-else>
+          <ComponentSpinner/>
           <span class="remaining">{{ remainingChapters }}</span>
         </span>
 
-        <select class="button" v-model="chapterCurrentNavPage">
+        <select class="button pages-selecter" v-model="chapterCurrentNavPage">
           <option v-for="page in chapterNavPages" :key="page" :value="page">
             第 {{ page + 1 }} 页
           </option>
@@ -164,6 +168,7 @@ const triggerCache = () => {
 
 .remaining {
   font-size: 0.8rem;
+  margin-left: 0.5rem;
 }
 
 .flex-right-groups {
@@ -172,5 +177,9 @@ const triggerCache = () => {
   justify-content: flex-end;
   flex: 1;
   margin-left: 1rem;  
+}
+
+.pages-selecter{
+  font-size: 0.8rem;
 }
 </style>

@@ -14,10 +14,7 @@ if (logoEl) {
 
 <template>
   <RouterView />
-  <Transition>
-    <Loading :count="currentRequestCount" :delay="500" msg="稍后再试" v-auto-animate/>
-  </Transition>
-  
+  <Loading :count="currentRequestCount" :delay="1000" msg="稍后再试" v-auto-animate/>
 </template>
 
 
@@ -30,6 +27,7 @@ if (logoEl) {
   --color-success: #56c375;
   --color-text: #393733;
   --color-sub-text: #706b66;
+  --color-link2: #b9d9ed;
 }
 
 

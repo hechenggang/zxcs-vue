@@ -8,12 +8,13 @@ import {
   getOneHistory,
 } from "../api";
 import { useRoute } from "vue-router";
-import type { Chapters } from "../types";
+import type { typeChapters } from "../types";
 import ComponentChapters from "../components/Chapters.vue";
 import ComponentPageCotroler from "../components/PageCotroler.vue";
 import ComponentChapterText from "../components/ChapterText.vue";
 import IconStar from "../components/icon/star.vue";
 import IconContent from "../components/icon/content.vue";
+
 
 // 首次指引
 const isOldGuy = localStorage.getItem("isOldGuy");
@@ -28,9 +29,9 @@ const route = useRoute();
 
 const bookId = ref<string>(route.query.id as string);
 const bookName = ref<string>(route.query.name as string);
-const currentBookChapters = ref<Chapters>([]);
+const currentBookChapters = ref<typeChapters>([]);
 const currentBookChapterArray = ref<Array<string>>([]);
-const currentBookChapterIndex = ref<number>(null);
+const currentBookChapterIndex = ref<number>(-1);
 const bookChaptersVisible = ref(false);
 const controlVisible = ref(false);
 const isBookCollected = ref(false);
@@ -129,13 +130,17 @@ const startCache = async () => {
     const [ chapterName, textStartIndex, textEndIndex] = currentBookChapters.value[i];
     let cache = getTextCache(bookId.value, textStartIndex, textEndIndex);
     if (!cache) {
-      const resp = await getBookChapter(bookId.value, textStartIndex, textEndIndex);
-      if (!resp) return;
-      setTextCache(bookId.value, textStartIndex, textEndIndex, resp.data);
+      try {
+        const resp = await getBookChapter(bookId.value, textStartIndex, textEndIndex);
+        setTextCache(bookId.value, textStartIndex, textEndIndex, resp.data);
+      } catch (error) {
+        console.log(error)
+        remainingChapters.value--;
+        continue
+      }
     }
     remainingChapters.value--;
   }
-
   isCaching.value = false;
   console.log(`Cached chapters from ${startIndex} to ${endIndex - 1}`);
 };
@@ -178,7 +183,15 @@ provide('remainingChapters', remainingChapters);
 
       <ComponentChapterText
         ref="text"
+        v-if="currentBookChapterArray.length>0"
         :chapter="currentBookChapterArray"
+        @switchControlVisible="switchControlVisible"
+        v-auto-animate
+      />
+
+      <ComponentChapterText
+        v-if="currentBookChapterArray.length == 0"
+        :chapter="['加载中']"
         @switchControlVisible="switchControlVisible"
         v-auto-animate
       />

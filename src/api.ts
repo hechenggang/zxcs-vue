@@ -22,8 +22,9 @@ const currentRequestCount = ref(0);
 // 准备一个请求实例
 const http = axios.create({
   baseURL: apiUri.base,
-  timeout: 3000
+  timeout: 15000
 })
+
 
 // 定义一个拦截器，读取 localstorage 内的 api code，载入请求 header 中
 http.interceptors.request.use((config) => {
@@ -33,7 +34,13 @@ http.interceptors.request.use((config) => {
     config.headers.set('x-api-code', code);
   }
   return config
-}, (error) => Promise.reject(error))
+}, (error) => {
+  // 请求阶段的错误拦截
+  currentRequestCount.value -= 1
+  // alert('请求失败，请检查网络连接或稍后再试。')
+  return Promise.reject(error)
+})
+
 
 // 错误拦截
 http.interceptors.response.use((res) => {
@@ -41,10 +48,8 @@ http.interceptors.response.use((res) => {
   return res
 }, (err) => {
   currentRequestCount.value -= 1
-  if (err.response.data.errmsg) {
-    alert(err.response.data.errmsg)
-    window.location.assign('/')
-  }
+  console.log(err)
+  // window.location.assign('/')
   return Promise.reject(err)
 })
 

@@ -6,7 +6,7 @@ import { ref, watchEffect, onMounted } from "vue";
 import { RouterLink } from "vue-router";
 
 import { getAllHistory } from "../api";
-import type { Books } from "../types";
+import type { typeBooks } from "../types";
 
 import BookList from "../components/BookList.vue";
 import IconCollect from "../components/icon/collect.vue";
@@ -14,12 +14,12 @@ import IconHome from "../components/icon/home.vue";
 
 document.title = "收藏 - 简单全本";
 
-const books = ref<Books>();
+const books = ref<typeBooks>();
 
 watchEffect(() => {
   console.log("getAllHistory start");
   getAllHistory().then((resp) => {
-    let temp:Books = []
+    let temp:typeBooks = []
     const response = resp.data as [string,string,number,number][]
     response.forEach(element => {
       temp.push([element[0],element[1],'已读 '+element[2],''])

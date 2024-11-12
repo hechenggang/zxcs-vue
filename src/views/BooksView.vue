@@ -6,7 +6,7 @@ import { ref, watch, watchEffect, onMounted } from "vue";
 import { RouterLink } from "vue-router";
 
 import { findBooks, getAllBooks, getRandomBooks } from "../api";
-import type { Books } from "../types";
+import type { typeBooks } from "../types";
 
 import ComponentPageCotroler from "../components/PageCotroler.vue";
 import BookList from "../components/BookList.vue";
@@ -17,7 +17,7 @@ import IconArrayLeft from "../components/icon/array-left.vue";
 import IconArrayRight from "../components/icon/array-right.vue";
 
 document.title = "书架 - 简单全本";
-const books = ref<Books>();
+const books = ref<typeBooks>();
 const currentBooksOffset = ref(0);
 const currentBooksLimit = ref(10);
 const currentBooksKeyword = ref("");

@@ -1,9 +1,9 @@
 // 定义数据类型
 
-type Book = [string, string, string, string]
-type Books = Array<Book>
-type Chapter = [ string, number, number]
-type Chapters = Array<Chapter>
-type History = [string, string, string, string]
+type typeBook = [string, string, string, string]
+type typeBooks = Array<typeBook>
+type typeChapter = [ string, number, number]
+type typeChapters = Array<typeChapter>
+type typeHistory = [string, string, string, string]
 
-export type { History, Book, Books, Chapter, Chapters }
+export type { typeHistory, typeBook, typeBooks, typeChapter, typeChapters }
