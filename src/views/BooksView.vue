@@ -13,8 +13,11 @@ import BookList from "../components/BookList.vue";
 import IconRandom from "../components/icon/random.vue";
 import IconCollect from "../components/icon/collect.vue";
 import IconHome from "../components/icon/home.vue";
+import componentSpinner from "../components/Spinner.vue";
 import IconArrayLeft from "../components/icon/array-left.vue";
 import IconArrayRight from "../components/icon/array-right.vue";
+import ComponentButtonWithLoading from "@/components/ButtonWithLoading.vue";
+
 
 document.title = "书架 - 简单全本";
 const books = ref<typeBooks>();
@@ -33,6 +36,8 @@ watchEffect(() => {
   console.log("getAllBooks start", 'currentBooksOffset:', currentBooksOffset.value, 'currentBooksLimit', currentBooksLimit.value);
   getAllBooks(currentBooksOffset.value, currentBooksLimit.value).then((resp) => {
     books.value = resp.data
+  }).catch((err) => {
+    console.log("getAllBooks got error, ", err)
   })
 })
 
@@ -41,31 +46,45 @@ watch(currentBooksKeyword, () => {
     console.log("findBooks start");
     findBooks(currentBooksKeyword.value).then((resp) => {
       books.value = resp.data
+    }).catch((err) => {
+      console.log("findBooks got error, ", err)
     })
   }
 })
 
+
 const loadRandomBooks = () => {
-  console.log("loadRandomBooks start");
-  getRandomBooks().then((resp) => {
-    books.value = resp.data
-  })
-}
+  return new Promise(async (resolve, reject) => {
+    try {
+      console.log("loadRandomBooks start")
+      const resp = await getRandomBooks()
+      books.value = resp.data
+      resolve(true)
+    } catch (error) {
+      reject(false)
+    }
+  });
+};
+
 </script>
 
 <template>
   <div class="main">
     <div class="top-bar">
-      <IconRandom class="random-icon" @click="loadRandomBooks" />
-
+      <ComponentButtonWithLoading :size="24" :action="loadRandomBooks">
+        <IconRandom class="random-icon" />
+      </ComponentButtonWithLoading>
       <input class="search-input" type="text" placeholder="搜索作者或书名" v-model="currentBooksKeyword" />
     </div>
-    <BookList v-if="books && books.length > 0" :books="books" v-auto-animate/>
 
+
+    <BookList v-if="books && books.length > 0" :books="books" v-auto-animate />
+    <div class="center" v-if="!books">
+      <componentSpinner v-auto-animate />
+    </div>
 
     <ComponentPageCotroler v-if="books && books.length == currentBooksLimit" @setPageIndex="setPageIndex"
       :text="(currentBooksOffset / 10 + 1).toString()" :leftArrayVisible="currentBooksOffset != 0" />
-
 
     <div class="bottom-bar shadow">
       <RouterLink class="bottom-bar-button" to="books">
@@ -108,6 +127,12 @@ const loadRandomBooks = () => {
   background: transparent;
   text-align: center;
 
+
+}
+
+
+::placeholder {
+  color: var(--color-link);
 }
 
 .random-icon {
@@ -147,5 +172,4 @@ const loadRandomBooks = () => {
 .router-link-active {
   border-bottom: 2px solid var(--color-link);
 }
-
 </style>

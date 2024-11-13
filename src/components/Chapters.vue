@@ -2,16 +2,18 @@
 import { ref, defineEmits, computed, defineProps, onMounted, watch, inject } from "vue";
 import type { Ref } from "vue";
 
-import type { typeChapter,typeChapters } from "../types";
+import type { typeChapter, typeChapters } from "../types";
 import ComponentPageCotroler from "../components/PageCotroler.vue";
 import IconClose from "./icon/close.vue";
 import IconDownload from "./icon/download.vue";
 import ComponentSpinner from "../components/Spinner.vue";
+import ComponentButtonWithLoading from "@/components/ButtonWithLoading.vue";
+
 
 // 定义组件的props
 const props = defineProps<{
   chapters: typeChapters;
-  index: number;  
+  index: number;
   bid: string;
 }>();
 
@@ -28,8 +30,11 @@ const chapterNavPages = computed(() =>
   )
 );
 
-const chapterCurrentNavPage = ref(0);
 const chapterSliceStep = ref(50);
+const chapterCurrentNavPage = ref(0);
+
+// 初始化当前导航页面
+chapterCurrentNavPage.value = Math.floor(props.index / chapterSliceStep.value);
 
 // 计算属性：章节切片起始位置
 const chapterSliceStart = computed(() => chapterCurrentNavPage.value * chapterSliceStep.value);
@@ -37,19 +42,14 @@ const chapterSliceStart = computed(() => chapterCurrentNavPage.value * chapterSl
 // 计算属性：章节切片结束位置
 const chapterSliceEnd = computed(() => chapterSliceStart.value + chapterSliceStep.value);
 
-// 计算属性：章节切片数组
-const chapterSliceArrayList = computed(() =>
-  props.chapters.slice(chapterSliceStart.value, chapterSliceEnd.value)
-);
-
 // 改变页面索引
 const changePageIndex = (num: number) => (chapterCurrentNavPage.value += num);
 
-// 初始化当前导航页面
-chapterCurrentNavPage.value = Math.floor(props.index / chapterSliceStep.value);
+// 计算属性：章节切片数组
+const chapterSliceArrayList = ref(props.chapters.slice(chapterSliceStart.value, chapterSliceEnd.value))
 
 // 获取页面缓存状态
-const getTextCacheStatus = (chapter:typeChapter) => {
+const getTextCacheStatus = (chapter: typeChapter) => {
   const [name, textStartIndex, textEndIndex] = chapter;
   const textCache = sessionStorage.getItem(`${props.bid}-${textStartIndex}-${textEndIndex}`);
   return textCache ? true : false;
@@ -73,12 +73,12 @@ const startCache = inject<() => Promise<void>>('startCache');
 const isCaching = inject<Ref<boolean>>('isCaching');
 const remainingChapters = inject<Ref<number>>('remainingChapters');
 
-// 触发缓存函数
-const triggerCache = () => {
-  if (startCache) {
-    startCache();
-  }
-};
+if (remainingChapters) {
+  // 监听 remainingChapters 变化，重新计算 chapterSliceArrayList
+  watch(remainingChapters, () => {
+    chapterSliceArrayList.value = props.chapters.slice(chapterSliceStart.value, chapterSliceEnd.value);
+  });
+}
 
 </script>
 
@@ -89,14 +89,10 @@ const triggerCache = () => {
         <IconClose />
       </span>
       <div class="flex-right-groups">
-        <span class="button" @click="triggerCache" v-if="!isCaching">
-          <IconDownload />
-        </span>
 
-        <span class="button" v-else>
-          <ComponentSpinner/>
-          <span class="remaining">{{ remainingChapters }}</span>
-        </span>
+        <ComponentButtonWithLoading :size="20" :action="startCache">
+          <IconDownload />
+        </ComponentButtonWithLoading>
 
         <select class="button pages-selecter" v-model="chapterCurrentNavPage">
           <option v-for="page in chapterNavPages" :key="page" :value="page">
@@ -107,21 +103,15 @@ const triggerCache = () => {
     </div>
 
     <ul class="chapters" v-auto-animate>
-      <li
-        v-for="(chapter, index) in chapterSliceArrayList"
-        :class="{'chapter':'1','active-chapter':(props.index === index + chapterSliceStart),'cached-chapter':getTextCacheStatus(chapter)}"
-        @click="emit('setChapterIndex', index + chapterSliceStart)"
-        :key="chapter[0]"
-      >
+      <li v-for="(chapter, index) in chapterSliceArrayList"
+        :class="{ 'chapter': '1', 'active-chapter': (props.index === index + chapterSliceStart), 'cached-chapter': getTextCacheStatus(chapter) }"
+        @click="emit('setChapterIndex', index + chapterSliceStart)" :key="chapter[0]">
         {{ chapter[0] }}
       </li>
     </ul>
 
-    <ComponentPageCotroler
-      @setPageIndex="changePageIndex"
-      :leftArrayVisible="chapterCurrentNavPage != 0"
-      :rightArrayVisible="chapterCurrentNavPage < chapterNavPages.length - 1"
-    />
+    <ComponentPageCotroler @setPageIndex="changePageIndex" :leftArrayVisible="chapterCurrentNavPage != 0"
+      :rightArrayVisible="chapterCurrentNavPage < chapterNavPages.length - 1" />
   </div>
 </template>
 
@@ -131,12 +121,14 @@ const triggerCache = () => {
   flex-direction: column;
   width: 100%;
   padding: 3.5rem 1rem;
+  background-color: var(--color-bg);
 }
 
 .chapters {
   width: 100%;
   overflow: auto;
   margin: 1rem 0;
+  
 }
 
 .chapter {
@@ -157,7 +149,7 @@ const triggerCache = () => {
   padding-left: 0.5rem;
 }
 
-.cached-chapter{
+.cached-chapter {
   border-right: 0.25rem solid var(--color-success);
 }
 
@@ -176,10 +168,10 @@ const triggerCache = () => {
   align-items: center;
   justify-content: flex-end;
   flex: 1;
-  margin-left: 1rem;  
+  margin-left: 1rem;
 }
 
-.pages-selecter{
+.pages-selecter {
   font-size: 0.8rem;
 }
 </style>

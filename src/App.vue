@@ -1,12 +1,9 @@
 <script setup lang="ts">
 
-import { currentRequestCount } from "./api";
-import Loading from "./components/Loading.vue";
-
 // 加载完成后删除 logo
 const logoEl = document.querySelector("#logo");
 if (logoEl) {
-  setTimeout(() => logoEl.remove(), 500);
+ setTimeout(() => logoEl.remove(), 500);
 }
 
 </script>
@@ -14,23 +11,10 @@ if (logoEl) {
 
 <template>
   <RouterView />
-  <Loading :count="currentRequestCount" :delay="1000" msg="稍后再试" v-auto-animate/>
 </template>
 
 
 <style>
-:root {
-  --color-bg: #fffdf2;
-  --color-bg2: #fff9ee;
-  --color-border: #ffeac3;
-  --color-link: #5698c3;
-  --color-success: #56c375;
-  --color-text: #393733;
-  --color-sub-text: #706b66;
-  --color-link2: #b9d9ed;
-}
-
-
 
 .buttons {
   display: flex;
@@ -42,7 +26,7 @@ if (logoEl) {
   opacity: 0.95;
 
   background-color: var(--color-bg2);
-  border: 1px solid var(--color-border);
+  /* border: 1px solid var(--color-border); */
 }
 
 .button {
@@ -130,17 +114,4 @@ if (logoEl) {
   color: var(--color-sub-text);
 }
 
-.v-enter-active {
-  transition: all 0.2s ease-in;
-}
-
-.v-leave-active {
-  transition: all 0.2s ease-out;
-}
-
-.v-enter-from,
-.v-leave-to {
-  transform: translateX(10px);
-  opacity: 0;
-}
 </style>

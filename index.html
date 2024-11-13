@@ -1,98 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
 
-  <!DOCTYPE html>
-  <html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>简单全本</title>
 
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>简单全本</title>
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/lxgw-wenkai-screen-webfont/1.7.0/lxgwwenkaigbscreenr.min.css"
+    media="print" onload="this.media='all'" />
 
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/lxgw-wenkai-screen-webfont/1.7.0/lxgwwenkaigbscreenr.min.css"
-      media="print"
-      onload="this.media='all'"
-    />
+  <style>
+    :root {
+      --color-bg: #fffdf2;
+      --color-bg2: #fff9ee;
+      --color-border: #ffeac3;
+      --color-link: #5698c3;
+      --color-success: #56c375;
+      --color-text: #393733;
+      --color-sub-text: #706b66;
+      --color-link2: #b9d9ed;
+    }
 
-    <style>
+
+    html {
+      font-size: 18px;
+    }
+
+
+    * {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      text-decoration: none;
+      border: none;
+      outline: none;
+      box-sizing: border-box;
+      font-family: "LXGW WenKai Screen R", sans-serif;
+      background-color: transparent;
       
+    }
 
-      html {
-        font-size: 18px;
-      }
-      
-      body {
-        background-color: var(--color-bg);
-      }
+    .center {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 999;
+      background-color: var(--color-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: nowrap;
+      flex-direction: column;
+    }
 
-      * {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        text-decoration: none;
-        border: none;
 
-        outline: none;
-        box-sizing: border-box;
-        
-        font-family: "LXGW WenKai Screen R", sans-serif;
-      }
-
-      .center {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 999;
-        background-color: var(--color-bg);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-wrap: nowrap;
-        flex-direction: column;
+    @keyframes scale {
+      0% {
+        transform: scale(1);
       }
 
-      
-
-      .icon-logo {
-        opacity: 0;
-        stroke: var(--color-sub-text);
-        fill: var(--color-sub-text);
-        animation: rotate 3s linear infinite;
-        background-color: var(--color-bg);
-        width: 3rem;
-        height: 3rem;
-        transition: all;
-        transition-duration: 0.5s;
+      50% {
+        transform: scale(1.25);
       }
 
-      ::placeholder {
-        color: var(--color-link);
+      100% {
+        transform: scale(1);
       }
-    </style>
-  </head>
+    }
 
-  <body>
-    <div id="app"></div>
-    <div id="logo" class="center">
-      <svg xmlns="http://www.w3.org/2000/svg"  class="icon-logo" width="0" height="0" viewBox="0 0 24 24" stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round">
-        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-        <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-        <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-        <line x1="3" y1="6" x2="3" y2="19" />
-        <line x1="12" y1="6" x2="12" y2="19" />
-        <line x1="21" y1="6" x2="21" y2="19" />
-      </svg>
-    </div>
-    <script>
-      // 为了 logo 能有动画
-      setTimeout(()=>{
-        document.querySelector('.icon-logo').setAttribute('style','width:2.5rem;height:2.5rem;opacity: 1;')
-      },150)
-    </script>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+    .icon-logo {
+      width: 3rem;
+      height: 3rem;
+      animation: scale 2s infinite;
+      fill: var(--color-link);
+      stroke: var(--color-link);
+    }
+  </style>
+</head>
 
-  </html>
+<body>
+  <div id="app"></div>
+  <div id="logo" class="center">
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon-logo" viewBox="0 0 24 24" stroke-width="1"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+      <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+      <line x1="3" y1="6" x2="3" y2="19" />
+      <line x1="12" y1="6" x2="12" y2="19" />
+      <line x1="21" y1="6" x2="21" y2="19" />
+    </svg>
+
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>

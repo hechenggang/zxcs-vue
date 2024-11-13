@@ -11,6 +11,7 @@ import type { typeBooks } from "../types";
 import BookList from "../components/BookList.vue";
 import IconCollect from "../components/icon/collect.vue";
 import IconHome from "../components/icon/home.vue";
+import componentSpinner from "../components/Spinner.vue";
 
 document.title = "收藏 - 简单全本";
 
@@ -19,13 +20,14 @@ const books = ref<typeBooks>();
 watchEffect(() => {
   console.log("getAllHistory start");
   getAllHistory().then((resp) => {
-    let temp:typeBooks = []
-    const response = resp.data as [string,string,number,number][]
+    let temp: typeBooks = []
+    const response = resp.data as [string, string, number, number][]
     response.forEach(element => {
-      temp.push([element[0],element[1],'已读 '+element[2],''])
+      temp.push([element[0], element[1], '已读 ' + element[2], ''])
     });
     books.value = temp
-
+  }).catch((err) => {
+    console.log("getAllHistory got error, ", err)
   })
 })
 
@@ -37,6 +39,9 @@ watchEffect(() => {
   <div class="main">
 
     <BookList v-if="books && books.length > 0" :books="books" />
+    <div class="center" v-if="!books">
+      <componentSpinner v-auto-animate />
+    </div>
 
     <div class="bottom-bar shadow">
       <RouterLink class="bottom-bar-button" to="books">
@@ -84,5 +89,4 @@ watchEffect(() => {
 .router-link-active {
   border-bottom: 2px solid var(--color-link);
 }
-
 </style>
