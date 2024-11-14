@@ -72,7 +72,7 @@ const loadRandomBooks = () => {
 <template>
   <div class="main">
     <div class="top-bar">
-      <ComponentButtonWithLoading :size="20" :action="loadRandomBooks">
+      <ComponentButtonWithLoading :size="20" :thicknesses="3" :action="loadRandomBooks">
         <IconRandom class="random-icon" />
       </ComponentButtonWithLoading>
       <input class="search-input" type="text" placeholder="搜索作者或书名" v-model="currentBooksKeyword" />

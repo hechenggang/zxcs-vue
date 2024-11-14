@@ -197,11 +197,9 @@ provide('remainingChapters', remainingChapters);
         <span class="button" @click="switchBookChaptersVisible">
           <IconContent />
         </span>
-        <div class="flex">
-          <ComponentButtonWithLoading :size="20" :thicknesses="2" :action="doStarBook">
-            <IconStar :class="{ 'icon-fill': isBookCollected }" />
-          </ComponentButtonWithLoading>
-        </div>
+        <ComponentButtonWithLoading class="button" :size="20" :thicknesses="2" :action="doStarBook">
+          <IconStar :class="{ 'icon-fill': isBookCollected }" />
+        </ComponentButtonWithLoading>
       </div>
     </div>
 
