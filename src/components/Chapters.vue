@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineEmits, computed, defineProps, onMounted, watch, inject } from "vue";
+import { ref, defineEmits, computed, defineProps, onMounted, watch, inject, watchEffect } from "vue";
 import type { Ref } from "vue";
 
 import type { typeChapter, typeChapters } from "../types";
@@ -73,12 +73,12 @@ const startCache = inject<() => Promise<void>>('startCache');
 const isCaching = inject<Ref<boolean>>('isCaching');
 const remainingChapters = inject<Ref<number>>('remainingChapters');
 
-if (remainingChapters) {
-  // 监听 remainingChapters 变化，重新计算 chapterSliceArrayList
-  watch(remainingChapters, () => {
+// 监听 remainingChapters 变化，重新计算 chapterSliceArrayList
+watch([remainingChapters,chapterSliceStart,chapterSliceEnd],() => {
+  if (remainingChapters) {
     chapterSliceArrayList.value = props.chapters.slice(chapterSliceStart.value, chapterSliceEnd.value);
-  });
-}
+  }
+})
 
 </script>
 
@@ -90,7 +90,7 @@ if (remainingChapters) {
       </span>
       <div class="flex-right-groups">
 
-        <ComponentButtonWithLoading :size="20" :action="startCache">
+        <ComponentButtonWithLoading :size="20" :thicknesses="2" :action="startCache">
           <IconDownload />
         </ComponentButtonWithLoading>
 
@@ -128,7 +128,7 @@ if (remainingChapters) {
   width: 100%;
   overflow: auto;
   margin: 1rem 0;
-  
+
 }
 
 .chapter {
@@ -145,7 +145,7 @@ if (remainingChapters) {
 }
 
 .active-chapter {
-  border-left: 0.25rem solid var(--color-link);
+  border-left: 0.25rem solid var(--color-link2);
   padding-left: 0.5rem;
 }
 

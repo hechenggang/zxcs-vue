@@ -1,6 +1,12 @@
 <template>
-  <div class="loading-container" :style="{ width: props.size + 'px', height: props.size + 'px' }">
-    <div class="loading-spinner"></div>
+  <div class="loading-container" :style="{
+    'width': props.size + 'px',
+    'height': props.size + 'px',
+  }">
+    <div class="loading-spinner" :style="{
+      'border': props.thicknesses + 'px solid var(--color-link2)',
+      'border-top': props.thicknesses + 'px solid var(--color-link)',
+    }"></div>
   </div>
 </template>
 
@@ -12,6 +18,10 @@ const props = defineProps({
     type: Number,
     default: 30,
   },
+  thicknesses: {
+    type: Number,
+    default: 5,
+  }
 });
 </script>
 
@@ -23,8 +33,6 @@ const props = defineProps({
 .loading-spinner {
   width: 100%;
   height: 100%;
-  border: 3px solid var(--color-link2);
-  border-top: 3px solid var(--color-link);
   border-radius: 50%;
   animation: spin 2s linear infinite;
 }
@@ -33,6 +41,7 @@ const props = defineProps({
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }

@@ -15,6 +15,7 @@ import ComponentChapterText from "../components/ChapterText.vue";
 import IconStar from "../components/icon/star.vue";
 import IconContent from "../components/icon/content.vue";
 import componentSpinner from "../components/Spinner.vue";
+import ComponentButtonWithLoading from "@/components/ButtonWithLoading.vue";
 
 
 // 首次指引
@@ -49,7 +50,6 @@ const setChapterIndex = (index: number) => {
 };
 
 const requestBookHistory = async () => {
-  console.log("getOneHistory");
   const resp = await getOneHistory(bookId.value);
   if (resp.data[0] === 200) {
     setChapterIndex(resp.data[1][2]);
@@ -60,18 +60,17 @@ const requestBookHistory = async () => {
 };
 
 const requestBookChapters = async () => {
-  console.log('getBookChapters');
   const resp = await getBookChapters(bookId.value);
   currentBookChapters.value = resp.data;
   requestBookHistory();
 };
 
-const getTextCache = (bookId:string, textStartIndex:number, textEndIndex:number) => {
+const getTextCache = (bookId: string, textStartIndex: number, textEndIndex: number) => {
   const textCache = sessionStorage.getItem(`${bookId}-${textStartIndex}-${textEndIndex}`)
   return textCache ? JSON.parse(textCache) : null;
 };
 
-const setTextCache = (bookId:string, textStartIndex:number, textEndIndex:number, textArray:string[]) => {
+const setTextCache = (bookId: string, textStartIndex: number, textEndIndex: number, textArray: string[]) => {
   sessionStorage.setItem(`${bookId}-${textStartIndex}-${textEndIndex}`, JSON.stringify(textArray));
 };
 
@@ -79,7 +78,6 @@ const requestBookChapter = async () => {
   const [chapterName, textStartIndex, textEndIndex] = currentBookChapters.value[currentBookChapterIndex.value];
   let cache = getTextCache(bookId.value, textStartIndex, textEndIndex);
   if (!cache) {
-    console.log("getBookChapter");
     const resp = await getBookChapter(bookId.value, textStartIndex, textEndIndex);
     if (!resp) return;
     setTextCache(bookId.value, textStartIndex, textEndIndex, resp.data);
@@ -92,19 +90,25 @@ const requestBookChapter = async () => {
   }
 };
 
-const collectBook = () => {
-  isBookCollected.value = true;
-  saveOneHistory(bookId.value, currentBookChapterIndex.value, bookName.value);
+const collectBook = async () => {
+  try {
+    isBookCollected.value = true;
+    await saveOneHistory(bookId.value, currentBookChapterIndex.value, bookName.value);
+  } catch (error) {
+    isBookCollected.value = false;
+  }
 };
 
-const discollectBook = () => {
+const discollectBook = async () => {
+  try {
+    isBookCollected.value = false;
+    await removeOneHistory(bookId.value);
+  } catch (error) {
+    isBookCollected.value = true;
+  }
   isBookCollected.value = false;
-  removeOneHistory(bookId.value);
 };
 
-const changeBookCollectStatus = () => {
-  isBookCollected.value ? discollectBook() : collectBook();
-};
 
 const addChapterIndex = (num: number) => {
   currentBookChapterArray.value = []
@@ -158,6 +162,17 @@ const startCache = () => {
 };
 
 
+const doStarBook = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      isBookCollected.value ? await discollectBook() : await collectBook();
+      resolve(true)
+    } catch (error) {
+      reject(false)
+    }
+  });
+};
+
 onBeforeMount(() => {
   requestBookChapters();
 });
@@ -183,9 +198,9 @@ provide('remainingChapters', remainingChapters);
           <IconContent />
         </span>
         <div class="flex">
-          <span class="button" @click="changeBookCollectStatus">
-            <IconStar class="icon-smaill" :class="{ 'icon-fill': isBookCollected }" />
-          </span>
+          <ComponentButtonWithLoading :size="20" :thicknesses="2" :action="doStarBook">
+            <IconStar :class="{ 'icon-fill': isBookCollected }" />
+          </ComponentButtonWithLoading>
         </div>
       </div>
     </div>
@@ -194,8 +209,8 @@ provide('remainingChapters', remainingChapters);
       <componentSpinner v-auto-animate />
     </div>
 
-    <ComponentChapterText ref="text" v-if="!bookChaptersVisible && currentBookChapterArray.length > 0" :chapter="currentBookChapterArray"
-      @switchControlVisible="switchControlVisible" v-auto-animate />
+    <ComponentChapterText ref="text" v-if="!bookChaptersVisible && currentBookChapterArray.length > 0"
+      :chapter="currentBookChapterArray" @switchControlVisible="switchControlVisible" v-auto-animate />
 
     <div class="center" v-if="currentBookChapterArray.length == 0">
       <componentSpinner />
