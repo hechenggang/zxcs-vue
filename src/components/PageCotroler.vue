@@ -2,6 +2,7 @@
 import { ref, defineEmits, computed, defineProps, onMounted } from "vue";
 import IconArrayLeft from "../components/icon/array-left.vue";
 import IconArrayRight from "../components/icon/array-right.vue";
+import ComponentButtonWithLoading from "@/components/ButtonWithLoading.vue";
 
 const props = defineProps({
   text: {
@@ -16,37 +17,47 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  action:{
+    type:Function
+  }
 });
 
-const emit = defineEmits<{
-  (e: "setPageIndex", num: number): void;
-}>();
+
+
+const funcPromise = (num:number) => {
+  return ()=>{
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (props.action){
+          await props.action(num)
+        }
+        resolve(true)
+      } catch (error) {
+        reject(false)
+      }
+    });
+  }
+};
+
+
 </script>
 
 <template>
     <div class="buttons">
-      <!-- page - -->
-      <span
-        class="button"
-        v-if="leftArrayVisible"
-        @click="emit('setPageIndex', -1)"
-      >
+      <ComponentButtonWithLoading class="button" v-if="leftArrayVisible" :size="20" :thicknesses="3" :action="funcPromise(-1)">
         <IconArrayLeft />
-      </span>
-      <!-- a button for keep position without function -->
+      </ComponentButtonWithLoading>
+  
       <span
         class="false-button"
         v-if="!rightArrayVisible || !leftArrayVisible"
       ></span>
+
       <p class="text">{{ text }}</p>
-      <!-- page + -->
-      <span
-        class="button"
-        v-if="rightArrayVisible"
-        @click="emit('setPageIndex', 1)"
-      >
+
+      <ComponentButtonWithLoading class="button" v-if="rightArrayVisible" :size="20" :thicknesses="3" :action="funcPromise(1)">
         <IconArrayRight />
-      </span>
+      </ComponentButtonWithLoading>
     </div>
 </template>
 

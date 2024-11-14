@@ -1,9 +1,7 @@
 <template>
   <button @click="handleClick" :disabled="isLoading">
-    <Transition name="slide-fade">
-      <componentSpinner v-if="isLoading" :size="props.size" :thicknesses="props.thicknesses" />
-      <slot v-else></slot>
-    </Transition>
+    <componentSpinner v-if="isLoading" :size="props.size" :thicknesses="props.thicknesses" />
+    <slot v-else></slot>
   </button>
 </template>
 
@@ -12,28 +10,6 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-/* 定义名为 smooth 的过渡效果 */
-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* 定义名为 smooth 的过渡效果 */
-.slide-fade-enter-active {
-  transition: all 0.15s ease-out;
-}
-
-.slide-fade-leave-active {
-  transition: all 0.1s cubic-bezier(1, 0.5, 0.8, 1);
-}
-
-.slide-fade-enter-from,
-.slide-fade-leave-to {
-  transform: translateX(3px);
-  opacity: 0;
 }
 
 </style>
@@ -60,6 +36,7 @@ const props = defineProps({
 const isLoading = ref(false);
 
 const handleClick = async () => {
+  console.log("handleClick",props)
   isLoading.value = true;
   try {
     await props.action();

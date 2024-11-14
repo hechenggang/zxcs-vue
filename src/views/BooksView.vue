@@ -26,20 +26,23 @@ const currentBooksLimit = ref(10);
 const currentBooksKeyword = ref("");
 
 
-const setPageIndex = (num: number) => {
-  currentBooksOffset.value = currentBooksOffset.value + num * currentBooksLimit.value;
+const setPageIndex = async (num: number) => {
+  console.log("setPageIndex",num)
+  const nextOffset = currentBooksOffset.value + num * currentBooksLimit.value;
+  await loadBooks(nextOffset,currentBooksLimit.value);
+  currentBooksOffset.value = nextOffset;
   document.documentElement.scrollTop = 0;
   document.body.scrollTop = 0;
 }
 
-watchEffect(() => {
-  console.log("getAllBooks start", 'currentBooksOffset:', currentBooksOffset.value, 'currentBooksLimit', currentBooksLimit.value);
-  getAllBooks(currentBooksOffset.value, currentBooksLimit.value).then((resp) => {
+const loadBooks = async (offset:number,limit:number) => {
+  await getAllBooks(offset,limit).then((resp) => {
     books.value = resp.data
   }).catch((err) => {
     console.log("getAllBooks got error, ", err)
   })
-})
+}
+
 
 watch(currentBooksKeyword, () => {
   if (currentBooksKeyword.value != '') {
@@ -66,6 +69,9 @@ const loadRandomBooks = () => {
   });
 };
 
+onMounted(async () => {
+  await loadBooks(currentBooksOffset.value,currentBooksLimit.value)
+})
 
 </script>
 
@@ -84,7 +90,7 @@ const loadRandomBooks = () => {
       <componentSpinner v-auto-animate />
     </div>
 
-    <ComponentPageCotroler v-if="books && books.length == currentBooksLimit" @setPageIndex="setPageIndex"
+    <ComponentPageCotroler v-if="books && books.length == currentBooksLimit" :action="setPageIndex"
       :text="(currentBooksOffset / 10 + 1).toString()" :leftArrayVisible="currentBooksOffset != 0" />
 
     <div class="bottom-bar shadow">
