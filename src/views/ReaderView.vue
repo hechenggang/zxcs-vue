@@ -42,9 +42,13 @@ const remainingChapters = ref(0);
 
 document.title = `${bookName.value} - 简单全本`;
 
-const setChapterIndex = (index: number) => {
-  currentBookChapterArray.value = [];
-  currentBookChapterIndex.value = index;
+const setChapterIndex = async (index: number) => {
+  if (index != currentBookChapterIndex.value) {
+    console.log("setChapterIndex", index);
+    // currentBookChapterArray.value = [];
+    currentBookChapterIndex.value = index;
+    await requestBookChapter()
+  }
   bookChaptersVisible.value = false;
   controlVisible.value = false;
 };
@@ -110,11 +114,10 @@ const discollectBook = async () => {
 };
 
 
-const addChapterIndex = (num: number) => {
-  currentBookChapterArray.value = []
+const addChapterIndex = async (num: number) => {
   const next = currentBookChapterIndex.value + num;
   if (next >= 0 && next < currentBookChapters.value.length) {
-    setChapterIndex(next);
+    await setChapterIndex(next);
   }
 };
 
@@ -177,7 +180,7 @@ onBeforeMount(() => {
   requestBookChapters();
 });
 
-watch(currentBookChapterIndex, requestBookChapter);
+// watch(currentBookChapterIndex, requestBookChapter);
 
 provide('startCache', startCache);
 provide('isCaching', isCaching);
@@ -190,7 +193,7 @@ provide('remainingChapters', remainingChapters);
   <div class="reader">
 
     <ComponentChapters v-if="bookChaptersVisible" :chapters="currentBookChapters" :index="currentBookChapterIndex"
-      :bid="bookId" @setChapterIndex="setChapterIndex" @switchBookChaptersVisible="switchBookChaptersVisible" />
+      :bid="bookId" :setChapterIndex="setChapterIndex" @switchBookChaptersVisible="switchBookChaptersVisible" />
 
     <div class="text-box" v-if="!bookChaptersVisible">
       <div class="bar top-bar shadow buttons" v-if="controlVisible">
@@ -214,7 +217,7 @@ provide('remainingChapters', remainingChapters);
       <componentSpinner />
     </div>
 
-    <ComponentPageCotroler class="bar bottom-bar shadow" v-if="controlVisible" @setPageIndex="addChapterIndex"
+    <ComponentPageCotroler class="bar bottom-bar shadow" v-if="controlVisible" :action="addChapterIndex"
       :leftArrayVisible="currentBookChapterIndex !== 0"
       :rightArrayVisible="currentBookChapterIndex < currentBookChapters.length - 1" />
   </div>

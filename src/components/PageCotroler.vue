@@ -23,7 +23,6 @@ const props = defineProps({
 });
 
 
-
 const funcPromise = (num:number) => {
   return ()=>{
     return new Promise(async (resolve, reject) => {

@@ -15,13 +15,25 @@ const props = defineProps<{
   chapters: typeChapters;
   index: number;
   bid: string;
+  setChapterIndex: Function;
 }>();
 
 // 定义组件的emits
 const emit = defineEmits<{
-  (e: "setChapterIndex", index: number): void;
+  // (e: "setChapterIndex", index: number): void;
   (e: "switchBookChaptersVisible"): void;
 }>();
+
+const processingIndex = ref<number>(-1);
+
+const handleChapterClick = async (index: number) => {
+  processingIndex.value = index;
+  try {
+    await props.setChapterIndex(index);
+  } finally {
+    processingIndex.value = -1;
+  }
+}
 
 // 构建页面导航列表
 const chapterNavPages = computed(() =>
@@ -74,7 +86,7 @@ const isCaching = inject<Ref<boolean>>('isCaching');
 const remainingChapters = inject<Ref<number>>('remainingChapters');
 
 // 监听 remainingChapters 变化，重新计算 chapterSliceArrayList
-watch([remainingChapters,chapterSliceStart,chapterSliceEnd],() => {
+watch([remainingChapters, chapterSliceStart, chapterSliceEnd], () => {
   if (remainingChapters) {
     chapterSliceArrayList.value = props.chapters.slice(chapterSliceStart.value, chapterSliceEnd.value);
   }
@@ -104,9 +116,10 @@ watch([remainingChapters,chapterSliceStart,chapterSliceEnd],() => {
 
     <ul class="chapters" v-auto-animate>
       <li v-for="(chapter, index) in chapterSliceArrayList"
-        :class="{ 'chapter': '1', 'active-chapter': (props.index === index + chapterSliceStart), 'cached-chapter': getTextCacheStatus(chapter) }"
-        @click="emit('setChapterIndex', index + chapterSliceStart)" :key="chapter[0]">
-        {{ chapter[0] }}
+        :class="{ 'chapter': true, 'active-chapter': (props.index === index + chapterSliceStart), 'cached-chapter': getTextCacheStatus(chapter) }"
+        @click="handleChapterClick(index + chapterSliceStart)" :key="chapter[0]">
+        <span>{{ chapter[0] }}</span>
+        <ComponentSpinner v-if="processingIndex === index + chapterSliceStart" :size="20" :thicknesses="2.5" />
       </li>
     </ul>
 
@@ -132,6 +145,9 @@ watch([remainingChapters,chapterSliceStart,chapterSliceEnd],() => {
 }
 
 .chapter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 0.5rem 0;
   font-size: 1rem;
   line-height: 1.5rem;
