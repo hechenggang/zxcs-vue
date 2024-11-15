@@ -45,9 +45,12 @@ document.title = `${bookName.value} - 简单全本`;
 const setChapterIndex = async (index: number) => {
   if (index != currentBookChapterIndex.value) {
     console.log("setChapterIndex", index);
-    // currentBookChapterArray.value = [];
     currentBookChapterIndex.value = index;
-    await requestBookChapter()
+    try {
+      await requestBookChapter()
+    } catch (error) {
+      console.log(error)
+    }
   }
   bookChaptersVisible.value = false;
   controlVisible.value = false;

@@ -71,6 +71,8 @@ const getTextCacheStatus = (chapter: typeChapter) => {
 watch(chapterCurrentNavPage, () => {
   document.body.scrollTop = 0;
   document.documentElement.scrollTop = 0;
+  chapterSliceArrayList.value = props.chapters.slice(chapterSliceStart.value, chapterSliceEnd.value);
+
 });
 
 // 组件挂载时，滚动到当前章节位置
@@ -123,7 +125,7 @@ watch([remainingChapters, chapterSliceStart, chapterSliceEnd], () => {
       </li>
     </ul>
 
-    <ComponentPageCotroler @setPageIndex="changePageIndex" :leftArrayVisible="chapterCurrentNavPage != 0"
+    <ComponentPageCotroler :action="changePageIndex" :leftArrayVisible="chapterCurrentNavPage != 0"
       :rightArrayVisible="chapterCurrentNavPage < chapterNavPages.length - 1" />
   </div>
 </template>
