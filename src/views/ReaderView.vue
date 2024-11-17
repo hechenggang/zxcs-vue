@@ -198,8 +198,8 @@ provide('remainingChapters', remainingChapters);
     <ComponentChapters v-if="bookChaptersVisible" :chapters="currentBookChapters" :index="currentBookChapterIndex"
       :bid="bookId" :setChapterIndex="setChapterIndex" @switchBookChaptersVisible="switchBookChaptersVisible" />
 
-    <div class="text-box" v-if="!bookChaptersVisible">
-      <div class="bar top-bar shadow buttons" v-if="controlVisible">
+    <div class="text-box" v-show="!bookChaptersVisible">
+      <div class="bar top-bar shadow buttons" v-show="controlVisible">
         <span class="button" @click="switchBookChaptersVisible">
           <IconContent />
         </span>
@@ -209,18 +209,18 @@ provide('remainingChapters', remainingChapters);
       </div>
     </div>
 
-    <div class="center" v-if="currentBookChapterArray.length == 0">
+    <div class="center" v-show="currentBookChapterArray.length == 0">
       <componentSpinner v-auto-animate />
     </div>
 
-    <ComponentChapterText ref="text" v-if="!bookChaptersVisible && currentBookChapterArray.length > 0"
+    <ComponentChapterText ref="text" v-show="!bookChaptersVisible && currentBookChapterArray.length > 0"
       :chapter="currentBookChapterArray" @switchControlVisible="switchControlVisible" v-auto-animate />
 
-    <div class="center" v-if="currentBookChapterArray.length == 0">
+    <div class="center" v-show="currentBookChapterArray.length == 0">
       <componentSpinner />
     </div>
 
-    <ComponentPageCotroler class="bar bottom-bar shadow" v-if="controlVisible" :action="addChapterIndex"
+    <ComponentPageCotroler class="bar bottom-bar shadow" v-show="controlVisible" :action="addChapterIndex"
       :leftArrayVisible="currentBookChapterIndex !== 0"
       :rightArrayVisible="currentBookChapterIndex < currentBookChapters.length - 1" />
   </div>
